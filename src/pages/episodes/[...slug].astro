@@ -50,7 +50,7 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
     <div class="wrap" style="max-width:560px;">
 
       <!-- Player -->
-      <section style="padding-bottom:40px;">
+      <section style="padding-bottom:32px;">
         <div style="border-radius:20px; overflow:hidden; border:1px solid rgba(44,36,51,0.07); box-shadow:0 6px 20px rgba(18,12,28,0.06);">
           <iframe
             src={episode.data.rssEmbedUrl}
@@ -66,7 +66,7 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
       <!-- Platforms -->
       <section style="padding-bottom:64px;">
         <div style="text-align:center; margin-bottom:16px;">
-          <h2 style="font-size:clamp(22px,3vw,28px); letter-spacing:-0.03em; margin:0; color:#2c2433;">在其他平台收听</h2>
+          <h2 style="font-size:clamp(22px,3vw,28px); letter-spacing:-0.03em; margin:0; color:#2c2433; font-weight:700;">在其他平台收听</h2>
         </div>
         <div style="display:grid; gap:14px;" class="platform-grid">
           {platforms.map((p) => (
@@ -83,7 +83,7 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
       </section>
 
       <!-- Newsletter -->
-      <section style="padding-bottom:64px;">
+      <section style="padding-bottom:56px;">
         <div class="newsletter-card">
           <h3 class="newsletter-title">不想错过问情播客的更新？</h3>
           <p class="newsletter-copy">订阅邮件，收到新节目、精选内容和最新动态。</p>
@@ -167,7 +167,7 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
     font-size: 15px;
     color: #9688a3;
     line-height: 1.8;
-    margin: 0 0 32px;
+    margin: 0 0 36px;
   }
   .newsletter-cta {
     display: inline-flex;
