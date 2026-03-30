@@ -140,10 +140,10 @@ import { platforms, socialLinks } from '../data/platforms';
 
       <!-- Newsletter -->
       <section id="signup" style="padding-bottom:56px;">
-        <div style="text-align:center; opacity:0.85;">
-          <p style="color:#9688a3; font-size:13px; letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin:0 0 8px;">Newsletter</p>
-          <p style="color:#6d6376; font-size:15px; margin:0 0 14px;">留下你的邮箱，偶尔收到新的内容与动态。</p>
-          <a href="https://askinglovepod.substack.com" target="_blank" rel="noopener noreferrer" class="newsletter-btn">
+        <div class="newsletter-card">
+          <h3 class="newsletter-title">不想错过问情播客的更新？</h3>
+          <p class="newsletter-copy">订阅邮件，收到新节目、精选内容和最新动态。</p>
+          <a href="https://askinglovepod.substack.com" target="_blank" rel="noopener noreferrer" class="newsletter-cta">
             在 Substack 订阅
           </a>
         </div>
@@ -223,23 +223,45 @@ import { platforms, socialLinks } from '../data/platforms';
     box-shadow: 0 4px 12px rgba(18, 12, 28, 0.06);
   }
 
-  /* Newsletter — very subdued */
-  .newsletter-btn {
+  /* Newsletter card */
+  .newsletter-card {
+    text-align: center;
+    padding: 44px 38px;
+    background: white;
+    border: 1px solid rgba(44, 36, 51, 0.06);
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(18, 12, 28, 0.025);
+  }
+  .newsletter-title {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #2c2433;
+    margin: 0 0 14px;
+  }
+  .newsletter-copy {
+    font-size: 15px;
+    color: #9688a3;
+    line-height: 1.8;
+    margin: 0 0 36px;
+  }
+  .newsletter-cta {
     display: inline-flex;
     align-items: center;
-    padding: 10px 16px;
-    border-radius: 12px;
-    border: 1px solid rgba(44, 36, 51, 0.08);
-    background: transparent;
-    color: #9688a3;
-    font-size: 13px;
-    font-weight: 500;
+    justify-content: center;
+    padding: 15px 24px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #8d51bb, #a66cd8);
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
     text-decoration: none;
-    transition: all 0.2s;
+    box-shadow: 0 6px 16px rgba(141, 81, 187, 0.14);
+    transition: all 0.2s ease;
   }
-  .newsletter-btn:hover {
-    border-color: rgba(141, 81, 187, 0.14);
-    color: #8d51bb;
+  .newsletter-cta:hover {
+    box-shadow: 0 10px 22px rgba(141, 81, 187, 0.20);
+    transform: translateY(-1px);
   }
 
   @media (max-width: 980px) {
