@@ -136,7 +136,7 @@ export default function SubmitForm() {
               style={{
                 width: '100%', minHeight: '180px', padding: '18px', borderRadius: '18px',
                 border: `1px solid ${errors.story ? '#e88' : 'rgba(141,81,187,0.12)'}`,
-                background: 'rgba(141,81,187,0.08)', color: '#2c2433', fontSize: '15px',
+                background: 'rgba(141,81,187,0.07)', color: '#2c2433', fontSize: '15px',
                 lineHeight: '1.8', resize: 'vertical' as const, outline: 'none',
                 fontFamily: 'inherit',
               }}
@@ -160,7 +160,7 @@ export default function SubmitForm() {
               style={{
                 width: '100%', minHeight: '120px', padding: '18px', borderRadius: '18px',
                 border: `1px solid ${errors.question ? '#e88' : 'rgba(141,81,187,0.12)'}`,
-                background: 'rgba(141,81,187,0.08)', color: '#2c2433', fontSize: '15px',
+                background: 'rgba(141,81,187,0.07)', color: '#2c2433', fontSize: '15px',
                 lineHeight: '1.8', resize: 'vertical' as const, outline: 'none',
                 fontFamily: 'inherit',
               }}
@@ -174,7 +174,7 @@ export default function SubmitForm() {
             <label style={{
               display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer',
               padding: '16px 18px', borderRadius: '18px',
-              border: '1px solid rgba(141,81,187,0.16)', background: 'rgba(141,81,187,0.08)',
+              border: '1px solid rgba(141,81,187,0.18)', background: 'rgba(141,81,187,0.07)',
               color: '#594c66', fontSize: '15px', lineHeight: '1.75',
             }}>
               <input
