@@ -9,63 +9,31 @@ import { platforms } from '../data/platforms';
   description="在你习惯的平台收听问情播客 AskingLove。"
 >
   <!-- Hero -->
-  <div class="wrap" style="padding:112px 0 84px; text-align:center;">
-    <div style="display:inline-block; padding:8px 14px; border-radius:999px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); color:#cec2d9; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:26px;">
-      Listen
-    </div>
-    <h1 style="margin:0 auto 18px; max-width:14ch; font-size:clamp(38px,5.8vw,58px); line-height:1.06; letter-spacing:-0.05em; font-weight:700;">
-      收听问情播客
+  <div class="wrap" style="padding-top:112px; padding-bottom:84px; text-align:center;">
+    <h1 style="margin:0 auto 20px; font-size:clamp(38px,5.8vw,58px); line-height:1.06; letter-spacing:-0.05em; font-weight:700;">
+      在线收听
     </h1>
-    <div style="max-width:640px; margin:0 auto; color:#cec2d9; font-size:clamp(17px,2vw,19px); line-height:1.85;">
-      在你习惯的平台收听
+    <div style="color:#cec2d9; font-size:clamp(17px,2vw,19px); line-height:1.85;">
+      选一个你习惯的平台开始收听。
     </div>
   </div>
 
   <!-- Light section -->
   <div class="light">
-    <div class="wrap">
-
-      <!-- Embedded Player -->
-      <section>
-        <div class="section-head">
-          <div class="kicker">Player</div>
-          <h2>在线收听</h2>
-        </div>
-        <div class="card card-lg" style="overflow:hidden; max-width:720px; margin:0 auto;">
-          <iframe
-            src="https://player.rss.com/askinglove"
-            title="问情播客 AskingLove"
-            width="100%"
-            height="320"
-            loading="lazy"
-            style="border:none; display:block;"
-            allow="autoplay"
-          ></iframe>
-        </div>
-      </section>
-
-      <!-- Platform Links -->
-      <section>
-        <div class="section-head">
-          <div class="kicker">Platforms</div>
-          <h2>选择你的平台</h2>
-          <div class="sub">选一个你习惯的平台开始收听。</div>
-        </div>
-        <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:18px; max-width:600px; margin:0 auto;" class="listen-grid">
+    <div class="wrap" style="max-width:560px;">
+      <section style="padding-bottom:80px;">
+        <div style="display:grid; gap:18px;" class="listen-grid">
           {platforms.map((p) => (
-            <a href={p.url} target="_blank" rel="noopener noreferrer" class="card" style="padding:24px; display:flex; justify-content:space-between; align-items:center; text-decoration:none; color:#2c2433;">
-              <strong style="font-size:18px;">{p.name}</strong>
-              <span style="font-size:18px; color:#6d6376;">→</span>
+            <a href={p.url} target="_blank" rel="noopener noreferrer" class="platform-card">
+              <strong>{p.name}</strong>
+              <span class="platform-arrow">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
             </a>
           ))}
         </div>
-      </section>
-
-      <!-- CTA -->
-      <section style="text-align:center;">
-        <h2 style="font-size:clamp(26px,3.5vw,38px); letter-spacing:-0.03em; margin-bottom:12px;">不想错过新节目？</h2>
-        <p style="color:#6d6376; margin-bottom:24px;">在 Spotify 或 RSS.com 上关注问情播客。</p>
-        <a class="btn btn-light" href="/episodes">浏览全部节目</a>
       </section>
     </div>
 
@@ -74,7 +42,48 @@ import { platforms } from '../data/platforms';
 </BaseLayout>
 
 <style>
-  @media (max-width: 720px) {
-    .listen-grid { grid-template-columns: 1fr !important; }
+  .platform-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 28px;
+    min-height: 78px;
+    background: white;
+    border: 1px solid rgba(44, 36, 51, 0.07);
+    border-radius: 20px;
+    box-shadow: 0 4px 14px rgba(18, 12, 28, 0.04);
+    text-decoration: none;
+    color: #2c2433;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .platform-card strong {
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+  .platform-arrow {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(141, 81, 187, 0.06);
+    color: #8d51bb;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+  .platform-card:hover {
+    border-color: rgba(141, 81, 187, 0.20);
+    box-shadow: 0 10px 28px rgba(18, 12, 28, 0.09);
+    transform: translateY(-2px);
+  }
+  .platform-card:hover .platform-arrow {
+    background: rgba(141, 81, 187, 0.12);
+    transform: translateX(2px);
+  }
+  .platform-card:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(18, 12, 28, 0.06);
   }
 </style>
