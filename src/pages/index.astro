@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import EpisodeCard from '../components/EpisodeCard.astro';
+import PlatformLinks from '../components/PlatformLinks.astro';
+---
+
+<BaseLayout
+  title="问情播客 AskingLove"
+  description="一档关于爱情、关系与情绪的中文播客。这里聊心动、失望、拉扯，也聊那些你不知道该跟谁说的话。"
+>
+  <!-- 1. Hero -->
+  <Hero />
+
+  <!-- 2. About Section -->
+  <section class="section-padding bg-white" id="about">
+    <div class="container-narrow mx-auto text-center">
+      <h2 class="text-2xl md:text-3xl font-bold text-text-primary mb-8">
+        问情播客是什么？
+      </h2>
+      <div class="max-w-2xl mx-auto space-y-6 text-text-secondary">
+        <p>
+          你有没有过这样的深夜——翻来覆去睡不着，脑子里全是那个人，想不通 ta 为什么那样，也想不通自己为什么这么在意？
+        </p>
+        <p>
+          问情播客想做的，不是给你标准答案。<br />
+          我们不说教，不评判，也不想做那个告诉你"你应该怎样"的人。<br />
+          只想像一个会认真听你说话的朋友，陪你把乱成一团的情绪理清一点。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Latest Episode -->
+  <section class="section-padding bg-brand-50">
+    <div class="container-narrow mx-auto">
+      <h2 class="text-2xl md:text-3xl font-bold text-text-primary text-center mb-12">
+        最新一集
+      </h2>
+      <div class="max-w-md mx-auto">
+        <EpisodeCard
+          title="暗恋是一个人的独角戏"
+          description="喜欢一个人喜欢到胃疼，准备好告白，却发现对方在问你怎么送礼物给别的男生。当暗恋变成一场自导自演，你爱的到底是她，还是那个深陷暗恋的自己？"
+          slug="dark-crush"
+          featured={true}
+          tags={['暗恋', '放不下']}
+        />
+      </div>
+      <div class="text-center mt-10">
+        <a href="/episodes" class="btn-outline text-sm">
+          浏览全部节目
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Featured Episodes (placeholder — will populate when user provides more episodes) -->
+
+  <!-- 5. Brand Statement -->
+  <section class="bg-gradient-to-br from-brand-800 to-brand-900 py-20 md:py-28">
+    <div class="container-narrow mx-auto px-6 text-center">
+      <blockquote class="text-xl md:text-2xl lg:text-3xl font-medium text-white leading-relaxed">
+        爱是需要学习的能力，<br class="hidden md:inline" />
+        而你愿意来到这里，就已经迈出了最重要的一步。
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- 6. Submit Your Story CTA -->
+  <section class="section-padding bg-white">
+    <div class="container-narrow mx-auto text-center">
+      <h2 class="text-2xl md:text-3xl font-bold text-text-primary mb-6">
+        把你的故事讲给我们听
+      </h2>
+      <p class="max-w-xl mx-auto text-text-secondary mb-4">
+        如果你也有一段不知道该跟谁说的感情经历，欢迎匿名投稿给问情播客。<br />
+        也许下一期节目，我们会陪你一起把这段情绪慢慢理清。
+      </p>
+      <p class="text-sm text-text-secondary/70 mb-10">
+        支持匿名投稿，我们会认真阅读每一个故事。
+      </p>
+      <a href="/submit" class="btn-primary text-base">
+        开始投稿
+      </a>
+    </div>
+  </section>
+
+  <!-- 7. Listen Everywhere -->
+  <section class="section-padding bg-brand-50">
+    <div class="container-narrow mx-auto text-center">
+      <h2 class="text-2xl md:text-3xl font-bold text-text-primary mb-10">
+        在你习惯的平台收听
+      </h2>
+      <PlatformLinks />
+    </div>
+  </section>
+</BaseLayout>

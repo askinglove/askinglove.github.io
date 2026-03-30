@@ -1,0 +1,110 @@
+---
+import { navLinks, navCta } from '../data/navigation';
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-brand-100/50">
+  <nav class="container-wide mx-auto flex items-center justify-between px-6 py-4">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2 text-brand-500 font-bold text-lg tracking-tight">
+      <span class="text-2xl">问情</span>
+      <span class="text-sm text-text-secondary font-normal hidden sm:inline">AskingLove</span>
+    </a>
+
+    <!-- Desktop Nav -->
+    <div class="hidden md:flex items-center gap-8">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'text-sm font-medium transition-colors duration-200',
+            currentPath === link.href
+              ? 'text-brand-500'
+              : 'text-text-secondary hover:text-brand-500',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+      <a href={navCta.href} class="btn-primary text-sm !px-6 !py-2">
+        {navCta.label}
+      </a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button
+      id="mobile-menu-btn"
+      class="md:hidden flex flex-col gap-1.5 p-2"
+      aria-label="打开菜单"
+      aria-expanded="false"
+    >
+      <span class="block w-5 h-0.5 bg-text-primary transition-all duration-300 origin-center" id="bar1"></span>
+      <span class="block w-5 h-0.5 bg-text-primary transition-all duration-300" id="bar2"></span>
+      <span class="block w-5 h-0.5 bg-text-primary transition-all duration-300 origin-center" id="bar3"></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div
+    id="mobile-menu"
+    class="md:hidden hidden fixed inset-0 top-[65px] bg-white/95 backdrop-blur-lg z-40"
+  >
+    <div class="flex flex-col items-center gap-6 pt-12 px-6">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'text-lg font-medium transition-colors duration-200',
+            currentPath === link.href
+              ? 'text-brand-500'
+              : 'text-text-primary hover:text-brand-500',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+      <a href={navCta.href} class="btn-primary mt-4">
+        {navCta.label}
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn')!;
+  const menu = document.getElementById('mobile-menu')!;
+  const bar1 = document.getElementById('bar1')!;
+  const bar2 = document.getElementById('bar2')!;
+  const bar3 = document.getElementById('bar3')!;
+
+  let open = false;
+
+  btn.addEventListener('click', () => {
+    open = !open;
+    menu.classList.toggle('hidden', !open);
+    btn.setAttribute('aria-expanded', String(open));
+
+    if (open) {
+      bar1.style.transform = 'rotate(45deg) translate(2.5px, 2.5px)';
+      bar2.style.opacity = '0';
+      bar3.style.transform = 'rotate(-45deg) translate(2.5px, -2.5px)';
+    } else {
+      bar1.style.transform = '';
+      bar2.style.opacity = '';
+      bar3.style.transform = '';
+    }
+  });
+
+  // Close menu on link click
+  menu.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      open = false;
+      menu.classList.add('hidden');
+      btn.setAttribute('aria-expanded', 'false');
+      bar1.style.transform = '';
+      bar2.style.opacity = '';
+      bar3.style.transform = '';
+    });
+  });
+</script>

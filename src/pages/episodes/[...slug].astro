@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AudioPlayer from '../../components/AudioPlayer.astro';
+import PlatformLinks from '../../components/PlatformLinks.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const episodes = await getCollection('episodes');
+  return episodes
+    .filter((ep) => !ep.data.draft)
+    .map((episode) => ({
+      params: { slug: episode.id.replace(/\.md$/, '') },
+      props: { episode },
+    }));
+}
+
+const { episode } = Astro.props;
+const { Content } = await render(episode);
+
+const formattedDate = new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(episode.data.pubDate);
+---
+
+<BaseLayout
+  title={episode.data.title}
+  description={episode.data.description}
+  ogType="article"
+>
+  <article class="section-padding bg-brand-50">
+    <div class="container-narrow mx-auto">
+      <!-- Episode Header -->
+      <div class="text-center mb-12">
+        <!-- Tags -->
+        {episode.data.tags.length > 0 && (
+          <div class="flex flex-wrap justify-center gap-2 mb-6">
+            {episode.data.tags.map((tag: string) => (
+              <span class="text-xs px-3 py-1 rounded-full bg-brand-100 text-brand-600">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-text-primary leading-tight mb-4">
+          {episode.data.title}
+        </h1>
+
+        <div class="flex items-center justify-center gap-3 text-sm text-text-secondary">
+          <time>{formattedDate}</time>
+          <span class="text-brand-300">·</span>
+          <span>{episode.data.duration}</span>
+        </div>
+      </div>
+
+      <!-- Player -->
+      <div class="mb-12">
+        <AudioPlayer rssEmbedUrl={episode.data.rssEmbedUrl} title={episode.data.title} />
+      </div>
+
+      <!-- Description -->
+      <div class="card p-8 md:p-10 mb-12">
+        <p class="text-text-secondary text-base leading-relaxed mb-8">
+          {episode.data.description}
+        </p>
+
+        <!-- Rendered Markdown content (show notes) -->
+        <div class="prose prose-brand max-w-none text-text-secondary">
+          <Content />
+        </div>
+      </div>
+
+      <!-- Platform Links -->
+      <div class="text-center">
+        <h3 class="text-lg font-semibold text-text-primary mb-6">
+          在其他平台收听
+        </h3>
+        <PlatformLinks variant="default" />
+      </div>
+
+      <!-- Back link -->
+      <div class="text-center mt-12">
+        <a href="/episodes" class="text-sm text-brand-500 hover:text-brand-600 transition-colors">
+          ← 浏览全部节目
+        </a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

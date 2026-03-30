@@ -1,0 +1,130 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="关于"
+  description="了解问情播客 AskingLove —— 一档关于爱情、关系与情绪的中文播客。"
+>
+  <!-- Hero -->
+  <section class="bg-gradient-to-b from-brand-900 to-brand-800 py-20 md:py-28">
+    <div class="container-narrow mx-auto px-6 text-center">
+      <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">
+        关于问情播客
+      </h1>
+      <p class="text-brand-200 text-lg">
+        AskingLove
+      </p>
+    </div>
+  </section>
+
+  <!-- What is AskingLove -->
+  <section class="section-padding bg-white">
+    <div class="container-narrow mx-auto">
+      <h2 class="text-2xl md:text-3xl font-bold text-text-primary mb-8 text-center">
+        问情播客是什么？
+      </h2>
+      <div class="max-w-2xl mx-auto space-y-6 text-text-secondary text-base">
+        <p>
+          你有没有过这样的深夜——翻来覆去睡不着，脑子里全是那个人，想不通 ta 为什么那样，也想不通自己为什么这么在意？
+        </p>
+        <p>
+          问情播客想做的，不是给你标准答案。
+          我们不说教，不评判，也不想做那个告诉你"你应该怎样"的人。
+          只想像一个会认真听你说话的朋友，陪你把乱成一团的情绪理清一点。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why it exists -->
+  <section class="section-padding bg-brand-50">
+    <div class="container-narrow mx-auto">
+      <h2 class="text-2xl md:text-3xl font-bold text-text-primary mb-8 text-center">
+        为什么做这档播客？
+      </h2>
+      <div class="max-w-2xl mx-auto space-y-6 text-text-secondary text-base">
+        <p>
+          在亲密关系里，我们常常不知道该跟谁说。跟朋友聊怕被评判，跟家人说怕被念叨，跟对方说又怕把关系弄得更复杂。
+        </p>
+        <p>
+          问情播客想做的，是成为那个可以安全说出口的地方。你不需要被评价，也不需要装作已经想通了。你只需要把故事慢慢讲出来。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- What we talk about -->
+  <section class="section-padding bg-white">
+    <div class="container-narrow mx-auto">
+      <h2 class="text-2xl md:text-3xl font-bold text-text-primary mb-10 text-center">
+        我们聊什么？
+      </h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-xl mx-auto">
+        {[
+          '暗恋与心动',
+          '分手与放下',
+          '信任与背叛',
+          '沟通与误解',
+          '异地与等待',
+          '婚姻与承诺',
+          '自我价值',
+          '家庭期待',
+          '那些说不出口的',
+        ].map((topic) => (
+          <div class="flex items-center gap-2 text-sm text-text-secondary">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-400 shrink-0"></span>
+            {topic}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Tone -->
+  <section class="section-padding bg-brand-50">
+    <div class="container-narrow mx-auto text-center">
+      <h2 class="text-2xl md:text-3xl font-bold text-text-primary mb-8">
+        我们的态度
+      </h2>
+      <div class="max-w-2xl mx-auto space-y-6 text-text-secondary text-base">
+        <p>
+          温暖、坦诚、不说教、不评判。
+        </p>
+        <p>
+          我们相信，在感情里遇到困难不是谁的错。每个人都有不知道怎么办的时候。而愿意认真面对这些情绪，本身就需要很大的勇气。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brand Statement -->
+  <section class="bg-gradient-to-br from-brand-800 to-brand-900 py-20 md:py-28">
+    <div class="container-narrow mx-auto px-6 text-center">
+      <blockquote class="text-xl md:text-2xl font-medium text-white leading-relaxed">
+        爱是需要学习的能力，<br class="hidden md:inline" />
+        而你愿意来到这里，就已经迈出了最重要的一步。
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section-padding bg-white">
+    <div class="container-narrow mx-auto text-center">
+      <h2 class="text-2xl font-bold text-text-primary mb-4">
+        开始收听
+      </h2>
+      <p class="text-text-secondary mb-8">
+        选一个安静的时刻，打开一集，慢慢听。
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="/listen" class="btn-primary">
+          开始收听
+        </a>
+        <a href="/submit" class="btn-outline">
+          投稿你的故事
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

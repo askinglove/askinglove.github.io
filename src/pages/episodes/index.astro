@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EpisodeCard from '../../components/EpisodeCard.astro';
+import { getCollection } from 'astro:content';
+
+const allEpisodes = (await getCollection('episodes'))
+  .filter((ep) => !ep.data.draft)
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+---
+
+<BaseLayout
+  title="全部节目"
+  description="浏览问情播客的所有节目。关于爱情、关系与情绪的中文播客。"
+>
+  <section class="section-padding bg-brand-50">
+    <div class="container-wide mx-auto">
+      <!-- Header -->
+      <div class="text-center mb-16">
+        <h1 class="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+          全部节目
+        </h1>
+        <p class="text-text-secondary max-w-lg mx-auto">
+          每一集都是一段真实的情绪旅程。选一个安静的时刻，慢慢听。
+        </p>
+      </div>
+
+      <!-- Episode Grid -->
+      {allEpisodes.length > 0 ? (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {allEpisodes.map((episode) => (
+            <EpisodeCard
+              title={episode.data.title}
+              description={episode.data.description}
+              slug={episode.id.replace(/\.md$/, '')}
+              pubDate={episode.data.pubDate}
+              duration={episode.data.duration}
+              tags={episode.data.tags}
+              featured={episode.data.featured}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-16">
+          <p class="text-text-secondary text-lg">节目正在路上，敬请期待。</p>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>

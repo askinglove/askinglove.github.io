@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubmitForm from '../components/SubmitForm.tsx';
+---
+
+<BaseLayout
+  title="投稿你的故事"
+  description="如果你也有一段不知道该跟谁说的感情经历，欢迎把故事讲给问情播客听。支持匿名投稿。"
+>
+  <!-- Hero -->
+  <section class="bg-gradient-to-b from-brand-900 to-brand-800 py-20 md:py-28">
+    <div class="container-narrow mx-auto px-6 text-center">
+      <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">
+        投稿你的故事
+      </h1>
+      <p class="text-brand-200 text-base max-w-lg mx-auto leading-relaxed">
+        如果你也有一段不知道该跟谁说的感情经历，欢迎把故事讲给我们听。<br />
+        你可以匿名投稿。我们会认真阅读每一个故事，并尊重你的隐私。
+      </p>
+    </div>
+  </section>
+
+  <!-- Form Section -->
+  <section class="section-padding bg-white">
+    <div class="container-narrow mx-auto max-w-2xl">
+      <p class="text-sm text-text-secondary/70 mb-10 text-center">
+        不是每一个故事都会被改编成节目，但每一个认真写下来的经历，我们都会认真对待。
+      </p>
+
+      <SubmitForm client:visible />
+    </div>
+  </section>
+
+  <!-- Privacy Block -->
+  <section class="section-padding bg-brand-50">
+    <div class="container-narrow mx-auto max-w-2xl">
+      <h2 class="text-lg font-bold text-text-primary mb-4">
+        关于隐私
+      </h2>
+      <div class="space-y-4 text-sm text-text-secondary leading-relaxed">
+        <p>
+          我们知道，很多感情故事都很私人。
+          如果你的投稿被用于节目创作，我们会默认进行匿名处理，并编辑掉可识别的个人信息。
+        </p>
+        <p>
+          为了保护你的隐私，我们可能会编辑掉可识别的细节。
+        </p>
+      </div>
+
+      <div class="mt-8 p-4 rounded-xl bg-brand-100/50 border border-brand-200/50">
+        <p class="text-xs text-text-secondary leading-relaxed">
+          问情播客不是心理治疗或危机干预服务。
+          如果你正在经历严重的人身安全风险、自伤想法或其他紧急危机，请尽快联系现实中的可信任对象或当地专业支持资源。
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

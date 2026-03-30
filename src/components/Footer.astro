@@ -1,0 +1,76 @@
+---
+import { platforms, socialLinks } from '../data/platforms';
+---
+
+<footer class="bg-brand-900 text-text-light">
+  <div class="container-wide mx-auto px-6 py-16 md:py-20">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+      <!-- Brand -->
+      <div>
+        <h3 class="text-xl font-bold mb-3">问情播客</h3>
+        <p class="text-brand-300 text-sm leading-relaxed">
+          一档关于爱情、关系与情绪的中文播客。<br />
+          陪你把乱成一团的情绪理清一点。
+        </p>
+      </div>
+
+      <!-- Listen -->
+      <div>
+        <h4 class="text-sm font-semibold uppercase tracking-wider text-brand-300 mb-4">收听平台</h4>
+        <ul class="space-y-3">
+          {platforms.map((p) => (
+            <li>
+              <a
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-sm text-brand-200 hover:text-white transition-colors duration-200"
+              >
+                {p.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Links -->
+      <div>
+        <h4 class="text-sm font-semibold uppercase tracking-wider text-brand-300 mb-4">链接</h4>
+        <ul class="space-y-3">
+          <li>
+            <a href="/submit" class="text-sm text-brand-200 hover:text-white transition-colors duration-200">
+              投稿你的故事
+            </a>
+          </li>
+          <li>
+            <a href="/about" class="text-sm text-brand-200 hover:text-white transition-colors duration-200">
+              关于我们
+            </a>
+          </li>
+          {socialLinks.map((s) => (
+            <li>
+              <a
+                href={s.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-sm text-brand-200 hover:text-white transition-colors duration-200"
+              >
+                {s.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="mt-16 pt-8 border-t border-brand-800/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-xs text-brand-400">
+        &copy; {new Date().getFullYear()} 问情播客 AskingLove. All rights reserved.
+      </p>
+      <p class="text-xs text-brand-400">
+        爱是需要学习的能力。
+      </p>
+    </div>
+  </div>
+</footer>
