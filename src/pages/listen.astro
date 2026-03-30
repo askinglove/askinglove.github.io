@@ -29,7 +29,6 @@ import { platforms } from '../data/platforms';
             title="问情播客 AskingLove"
             width="100%"
             height="320"
-            loading="lazy"
             style="border:none; display:block;"
             allow="autoplay"
           ></iframe>
@@ -38,6 +37,10 @@ import { platforms } from '../data/platforms';
 
       <!-- Platforms -->
       <section style="padding-bottom:80px;">
+        <div style="text-align:center; margin-bottom:24px;">
+          <h2 style="font-size:clamp(26px,3.5vw,34px); letter-spacing:-0.03em; margin:0 0 8px; color:#2c2433;">选择你的平台</h2>
+          <p style="color:#6d6376; font-size:15px; margin:0;">选一个你习惯的平台开始收听。</p>
+        </div>
         <div style="display:grid; gap:18px;" class="listen-grid">
           {platforms.map((p) => (
             <a href={p.url} target="_blank" rel="noopener noreferrer" class="platform-card">
