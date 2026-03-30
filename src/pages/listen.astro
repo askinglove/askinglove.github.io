@@ -35,6 +35,17 @@ import { platforms } from '../data/platforms';
           ))}
         </div>
       </section>
+
+      <!-- Newsletter -->
+      <section style="padding-bottom:56px;">
+        <div style="text-align:center; opacity:0.85;">
+          <p style="color:#9688a3; font-size:13px; letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin:0 0 8px;">Newsletter</p>
+          <p style="color:#6d6376; font-size:15px; margin:0 0 14px;">留下你的邮箱，偶尔收到新的内容与动态。</p>
+          <a href="https://askinglovepod.substack.com" target="_blank" rel="noopener noreferrer" class="newsletter-btn">
+            在 Substack 订阅
+          </a>
+        </div>
+      </section>
     </div>
 
     <Footer />
@@ -85,5 +96,22 @@ import { platforms } from '../data/platforms';
   .platform-card:active {
     transform: translateY(0);
     box-shadow: 0 4px 12px rgba(18, 12, 28, 0.06);
+  }
+  .newsletter-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(44, 36, 51, 0.08);
+    background: transparent;
+    color: #9688a3;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .newsletter-btn:hover {
+    border-color: rgba(141, 81, 187, 0.14);
+    color: #8d51bb;
   }
 </style>
