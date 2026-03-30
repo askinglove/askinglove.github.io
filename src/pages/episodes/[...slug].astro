@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import AudioPlayer from '../../components/AudioPlayer.astro';
-import PlatformLinks from '../../components/PlatformLinks.astro';
+import Footer from '../../components/Footer.astro';
 import { getCollection, render } from 'astro:content';
+import { platforms } from '../../data/platforms';
 
 export async function getStaticPaths() {
   const episodes = await getCollection('episodes');
@@ -29,63 +29,80 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
   description={episode.data.description}
   ogType="article"
 >
-  <article class="section-padding bg-brand-50">
-    <div class="container-narrow mx-auto">
-      <!-- Episode Header -->
-      <div class="text-center mb-12">
-        <!-- Tags -->
-        {episode.data.tags.length > 0 && (
-          <div class="flex flex-wrap justify-center gap-2 mb-6">
-            {episode.data.tags.map((tag: string) => (
-              <span class="text-xs px-3 py-1 rounded-full bg-brand-100 text-brand-600">
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
-
-        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-text-primary leading-tight mb-4">
-          {episode.data.title}
-        </h1>
-
-        <div class="flex items-center justify-center gap-3 text-sm text-text-secondary">
-          <time>{formattedDate}</time>
-          <span class="text-brand-300">·</span>
-          <span>{episode.data.duration}</span>
-        </div>
+  <!-- Hero -->
+  <div class="wrap" style="padding:112px 0 84px; text-align:center;">
+    {episode.data.tags.length > 0 && (
+      <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:22px;">
+        {episode.data.tags.map((tag: string) => (
+          <span style="padding:6px 12px; border-radius:999px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); color:#cec2d9; font-size:12px;">{tag}</span>
+        ))}
       </div>
+    )}
+    <h1 style="margin:0 auto 18px; max-width:16ch; font-size:clamp(38px,5.8vw,58px); line-height:1.06; letter-spacing:-0.05em; font-weight:700;">
+      {episode.data.title}
+    </h1>
+    <div style="color:#cec2d9; font-size:14px;">
+      {formattedDate} · {episode.data.duration}
+    </div>
+  </div>
+
+  <!-- Light section -->
+  <div class="light">
+    <div class="wrap">
 
       <!-- Player -->
-      <div class="mb-12">
-        <AudioPlayer rssEmbedUrl={episode.data.rssEmbedUrl} title={episode.data.title} />
-      </div>
-
-      <!-- Description -->
-      <div class="card p-8 md:p-10 mb-12">
-        <p class="text-text-secondary text-base leading-relaxed mb-8">
-          {episode.data.description}
-        </p>
-
-        <!-- Rendered Markdown content (show notes) -->
-        <div class="prose prose-brand max-w-none text-text-secondary">
-          <Content />
+      <section>
+        <div class="card card-lg" style="overflow:hidden; max-width:720px; margin:0 auto;">
+          <iframe
+            src={episode.data.rssEmbedUrl}
+            title={`收听: ${episode.data.title}`}
+            width="100%"
+            height="200"
+            loading="lazy"
+            style="border:none; display:block;"
+            allow="autoplay"
+          ></iframe>
         </div>
-      </div>
+      </section>
+
+      <!-- Content -->
+      <section>
+        <div class="card card-lg" style="padding:36px; max-width:720px; margin:0 auto;">
+          <p style="color:#6d6376; font-size:16px; line-height:1.88; margin:0 0 24px;">{episode.data.description}</p>
+          <div style="color:#6d6376; font-size:15px; line-height:1.85;">
+            <Content />
+          </div>
+        </div>
+      </section>
 
       <!-- Platform Links -->
-      <div class="text-center">
-        <h3 class="text-lg font-semibold text-text-primary mb-6">
-          在其他平台收听
-        </h3>
-        <PlatformLinks variant="default" />
-      </div>
+      <section>
+        <div class="section-head">
+          <div class="kicker">Listen</div>
+          <h2>在其他平台收听</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:18px; max-width:500px; margin:0 auto;" class="platform-grid">
+          {platforms.map((p) => (
+            <a href={p.url} target="_blank" rel="noopener noreferrer" class="card" style="padding:20px; display:flex; justify-content:space-between; align-items:center; text-decoration:none; color:#2c2433;">
+              <strong style="font-size:16px;">{p.name}</strong>
+              <span style="color:#6d6376;">→</span>
+            </a>
+          ))}
+        </div>
+      </section>
 
-      <!-- Back link -->
-      <div class="text-center mt-12">
-        <a href="/episodes" class="text-sm text-brand-500 hover:text-brand-600 transition-colors">
-          ← 浏览全部节目
-        </a>
-      </div>
+      <!-- Back -->
+      <section style="text-align:center; padding-bottom:48px;">
+        <a href="/episodes" style="color:#8d51bb; text-decoration:none; font-size:14px;">← 浏览全部节目</a>
+      </section>
     </div>
-  </article>
+
+    <Footer />
+  </div>
 </BaseLayout>
+
+<style>
+  @media (max-width: 600px) {
+    .platform-grid { grid-template-columns: 1fr !important; }
+  }
+</style>

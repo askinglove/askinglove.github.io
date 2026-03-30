@@ -4,72 +4,138 @@ import { navLinks, navCta } from '../data/navigation';
 const currentPath = Astro.url.pathname;
 ---
 
-<header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-brand-100/50">
-  <nav class="container-wide mx-auto flex items-center justify-between px-6 py-4">
-    <!-- Logo -->
-    <a href="/" class="flex items-center gap-2 text-brand-500 font-bold text-lg tracking-tight">
-      <span class="text-2xl">问情</span>
-      <span class="text-sm text-text-secondary font-normal hidden sm:inline">AskingLove</span>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <!-- Brand -->
+    <a href="/" class="brand">
+      <div class="mark">🎧</div>
+      <div>问情播客 AskingLove</div>
     </a>
 
     <!-- Desktop Nav -->
-    <div class="hidden md:flex items-center gap-8">
+    <div class="nav-links">
       {navLinks.map((link) => (
-        <a
-          href={link.href}
-          class:list={[
-            'text-sm font-medium transition-colors duration-200',
-            currentPath === link.href
-              ? 'text-brand-500'
-              : 'text-text-secondary hover:text-brand-500',
-          ]}
-        >
-          {link.label}
-        </a>
+        <a href={link.href}>{link.label}</a>
       ))}
-      <a href={navCta.href} class="btn-primary text-sm !px-6 !py-2">
-        {navCta.label}
-      </a>
     </div>
 
     <!-- Mobile Menu Button -->
-    <button
-      id="mobile-menu-btn"
-      class="md:hidden flex flex-col gap-1.5 p-2"
-      aria-label="打开菜单"
-      aria-expanded="false"
-    >
-      <span class="block w-5 h-0.5 bg-text-primary transition-all duration-300 origin-center" id="bar1"></span>
-      <span class="block w-5 h-0.5 bg-text-primary transition-all duration-300" id="bar2"></span>
-      <span class="block w-5 h-0.5 bg-text-primary transition-all duration-300 origin-center" id="bar3"></span>
+    <button id="mobile-menu-btn" class="mobile-btn" aria-label="打开菜单" aria-expanded="false">
+      <span id="bar1"></span>
+      <span id="bar2"></span>
+      <span id="bar3"></span>
     </button>
-  </nav>
+  </div>
 
   <!-- Mobile Menu -->
-  <div
-    id="mobile-menu"
-    class="md:hidden hidden fixed inset-0 top-[65px] bg-white/95 backdrop-blur-lg z-40"
-  >
-    <div class="flex flex-col items-center gap-6 pt-12 px-6">
+  <div id="mobile-menu" class="mobile-menu hidden">
+    <div class="mobile-menu-inner">
       {navLinks.map((link) => (
-        <a
-          href={link.href}
-          class:list={[
-            'text-lg font-medium transition-colors duration-200',
-            currentPath === link.href
-              ? 'text-brand-500'
-              : 'text-text-primary hover:text-brand-500',
-          ]}
-        >
-          {link.label}
-        </a>
+        <a href={link.href} class="mobile-link">{link.label}</a>
       ))}
-      <a href={navCta.href} class="btn-primary mt-4">
-        {navCta.label}
-      </a>
+      <a href={navCta.href} class="btn btn-primary mobile-cta">{navCta.label}</a>
     </div>
   </div>
 </header>
+
+<style>
+  .nav {
+    backdrop-filter: blur(16px);
+    background: rgba(13, 9, 19, 0.56);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+  }
+  .brand {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-weight: 700;
+    color: inherit;
+    text-decoration: none;
+    font-size: 15px;
+  }
+  .mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #8d51bb, #a56bd7);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 0 28px rgba(141, 81, 187, 0.26);
+    font-size: 18px;
+  }
+  .nav-links {
+    display: flex;
+    gap: 22px;
+    color: #cec2d9;
+    font-size: 14px;
+  }
+  .nav-links a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover {
+    color: white;
+  }
+
+  /* Mobile button */
+  .mobile-btn {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    padding: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  .mobile-btn span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: #cec2d9;
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+
+  /* Mobile menu */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    top: 71px;
+    background: rgba(13, 9, 19, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 19;
+  }
+  .mobile-menu.hidden { display: none; }
+  .mobile-menu-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding: 48px 24px;
+  }
+  .mobile-link {
+    color: #f6f1fb;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  .mobile-cta { margin-top: 8px; }
+
+  @media (max-width: 980px) {
+    .nav-links { display: none; }
+    .mobile-btn { display: flex; }
+  }
+</style>
 
 <script>
   const btn = document.getElementById('mobile-menu-btn')!;
@@ -96,7 +162,6 @@ const currentPath = Astro.url.pathname;
     }
   });
 
-  // Close menu on link click
   menu.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', () => {
       open = false;

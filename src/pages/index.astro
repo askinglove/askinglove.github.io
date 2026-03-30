@@ -1,97 +1,190 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Hero from '../components/Hero.astro';
-import EpisodeCard from '../components/EpisodeCard.astro';
-import PlatformLinks from '../components/PlatformLinks.astro';
+import Footer from '../components/Footer.astro';
+import { platforms, socialLinks } from '../data/platforms';
 ---
 
 <BaseLayout
   title="问情播客 AskingLove"
   description="一档关于爱情、关系与情绪的中文播客。这里聊心动、失望、拉扯，也聊那些你不知道该跟谁说的话。"
 >
-  <!-- 1. Hero -->
-  <Hero />
-
-  <!-- 2. About Section -->
-  <section class="section-padding bg-white" id="about">
-    <div class="container-narrow mx-auto text-center">
-      <h2 class="text-2xl md:text-3xl font-bold text-text-primary mb-8">
-        问情播客是什么？
-      </h2>
-      <div class="max-w-2xl mx-auto space-y-6 text-text-secondary">
-        <p>
-          你有没有过这样的深夜——翻来覆去睡不着，脑子里全是那个人，想不通 ta 为什么那样，也想不通自己为什么这么在意？
-        </p>
-        <p>
-          问情播客想做的，不是给你标准答案。<br />
-          我们不说教，不评判，也不想做那个告诉你"你应该怎样"的人。<br />
-          只想像一个会认真听你说话的朋友，陪你把乱成一团的情绪理清一点。
-        </p>
-      </div>
+  <!-- Hero -->
+  <div class="wrap" style="padding-top:110px; padding-bottom:92px; text-align:center;">
+    <div style="display:inline-block; padding:8px 14px; border-radius:999px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); color:#cec2d9; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:28px;">
+      问情播客 AskingLove
     </div>
-  </section>
-
-  <!-- 3. Latest Episode -->
-  <section class="section-padding bg-brand-50">
-    <div class="container-narrow mx-auto">
-      <h2 class="text-2xl md:text-3xl font-bold text-text-primary text-center mb-12">
-        最新一集
-      </h2>
-      <div class="max-w-md mx-auto">
-        <EpisodeCard
-          title="暗恋是一个人的独角戏"
-          description="喜欢一个人喜欢到胃疼，准备好告白，却发现对方在问你怎么送礼物给别的男生。当暗恋变成一场自导自演，你爱的到底是她，还是那个深陷暗恋的自己？"
-          slug="dark-crush"
-          featured={true}
-          tags={['暗恋', '放不下']}
-        />
-      </div>
-      <div class="text-center mt-10">
-        <a href="/episodes" class="btn-outline text-sm">
-          浏览全部节目
-        </a>
-      </div>
+    <h1 style="margin:0 auto 22px; max-width:12ch; font-size:clamp(38px,5.8vw,58px); line-height:1.06; letter-spacing:-0.05em; font-weight:700; text-align:center;">
+      <span style="display:block; text-align:center;">有些话，</span>
+      <span style="display:block; text-align:center;">不知道该跟谁说。</span>
+    </h1>
+    <div style="max-width:720px; margin:0 auto; color:#cec2d9; font-size:clamp(17px,2vw,19px); line-height:1.85;">
+      这里聊心动、失望、拉扯，也聊那些你不知道该跟谁说的话。<br>
+      像一个会认真听你说话的朋友，陪你把乱成一团的情绪理清一点。
     </div>
-  </section>
-
-  <!-- 4. Featured Episodes (placeholder — will populate when user provides more episodes) -->
-
-  <!-- 5. Brand Statement -->
-  <section class="bg-gradient-to-br from-brand-800 to-brand-900 py-20 md:py-28">
-    <div class="container-narrow mx-auto px-6 text-center">
-      <blockquote class="text-xl md:text-2xl lg:text-3xl font-medium text-white leading-relaxed">
-        爱是需要学习的能力，<br class="hidden md:inline" />
-        而你愿意来到这里，就已经迈出了最重要的一步。
-      </blockquote>
+    <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:34px;">
+      <a class="btn btn-primary" href="/listen">开始收听</a>
+      <a class="btn btn-secondary" href="/submit">投稿你的故事</a>
     </div>
-  </section>
+  </div>
 
-  <!-- 6. Submit Your Story CTA -->
-  <section class="section-padding bg-white">
-    <div class="container-narrow mx-auto text-center">
-      <h2 class="text-2xl md:text-3xl font-bold text-text-primary mb-6">
-        把你的故事讲给我们听
-      </h2>
-      <p class="max-w-xl mx-auto text-text-secondary mb-4">
-        如果你也有一段不知道该跟谁说的感情经历，欢迎匿名投稿给问情播客。<br />
-        也许下一期节目，我们会陪你一起把这段情绪慢慢理清。
-      </p>
-      <p class="text-sm text-text-secondary/70 mb-10">
-        支持匿名投稿，我们会认真阅读每一个故事。
-      </p>
-      <a href="/submit" class="btn-primary text-base">
-        开始投稿
-      </a>
-    </div>
-  </section>
+  <!-- Light section -->
+  <div class="light">
+    <div class="wrap">
 
-  <!-- 7. Listen Everywhere -->
-  <section class="section-padding bg-brand-50">
-    <div class="container-narrow mx-auto text-center">
-      <h2 class="text-2xl md:text-3xl font-bold text-text-primary mb-10">
-        在你习惯的平台收听
-      </h2>
-      <PlatformLinks />
+      <!-- Featured Episode -->
+      <section id="episodes">
+        <div class="section-head">
+          <div class="kicker">Start Here</div>
+          <h2>从这里开始听</h2>
+        </div>
+        <div class="card card-lg" style="overflow:hidden;">
+          <div style="display:grid; grid-template-columns:320px 1fr;" class="feature-grid">
+            <!-- Cover -->
+            <div style="min-height:400px; padding:28px; background:radial-gradient(circle at 22% 18%, rgba(255,132,124,0.18), transparent 24%), radial-gradient(circle at 78% 78%, rgba(199,155,230,0.10), transparent 24%), linear-gradient(180deg,#161021,#1d1428); color:white; display:flex; flex-direction:column; justify-content:space-between;" class="feature-cover">
+              <small style="color:#a7d6ff; font-size:11px; letter-spacing:0.18em; text-transform:uppercase;">Featured Episode</small>
+              <strong style="font-size:clamp(30px,3vw,38px); line-height:1.12; max-width:6ch;">暗恋是一个人的<br>独角戏</strong>
+              <small style="color:#d8c6e6; font-size:11px; letter-spacing:0.16em; text-transform:uppercase;">问情播客 AskingLove</small>
+            </div>
+            <!-- Copy -->
+            <div style="padding:40px 36px; display:flex; flex-direction:column; justify-content:center;" class="feature-copy">
+              <div style="color:#6d6376; font-size:14px; margin-bottom:12px;">入口推荐</div>
+              <div style="font-size:clamp(30px,3vw,40px); line-height:1.08; letter-spacing:-0.03em; margin-bottom:16px; font-weight:700;">
+                你喜欢的，<br>到底是她，<br>还是那个深陷暗恋的自己？
+              </div>
+              <div style="color:#6d6376; font-size:16px; line-height:1.9; margin-bottom:18px; max-width:34ch;">
+                喜欢一个人喜欢到胃疼，准备好告白，<br>却发现对方在问你怎么送礼物给别的男生。
+              </div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
+                <span class="tag">暗恋</span>
+                <span class="tag">单相思</span>
+                <span class="tag">放不下</span>
+              </div>
+              <div>
+                <a class="btn btn-primary" href="/episodes/dark-crush">收听这一集</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About -->
+      <section id="about">
+        <div class="section-head">
+          <div class="kicker">About</div>
+          <h2>问情播客是什么？</h2>
+          <div class="sub">
+            你有没有过这样的深夜——翻来覆去睡不着，<br>
+            脑子里全是那个人，想不通 ta 为什么那样，<br>
+            也想不通自己为什么这么在意？
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:18px;" class="three-up">
+          <div class="card" style="padding:24px;">
+            <strong style="display:block; font-size:20px; margin-bottom:8px;">不说教</strong>
+            <p style="margin:0; color:#6d6376; line-height:1.8; font-size:15px;">问情播客想做的，不是给你标准答案，也不想做那个告诉你"你应该怎样"的人。</p>
+          </div>
+          <div class="card" style="padding:24px;">
+            <strong style="display:block; font-size:20px; margin-bottom:8px;">不评判</strong>
+            <p style="margin:0; color:#6d6376; line-height:1.8; font-size:15px;">这里讲的不只是故事，也是那些你不知道该怎么整理、也不知道该跟谁说的情绪。</p>
+          </div>
+          <div class="card" style="padding:24px;">
+            <strong style="display:block; font-size:20px; margin-bottom:8px;">像朋友一样</strong>
+            <p style="margin:0; color:#6d6376; line-height:1.8; font-size:15px;">心动、失望、拉扯、放不下——都可以在这里慢慢说。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Belief -->
+      <section>
+        <div style="text-align:center; padding:74px 28px; border-radius:34px; background:radial-gradient(circle at 50% 10%, rgba(141,81,187,0.18), transparent 30%), linear-gradient(180deg,#171123,#110b18); color:white; box-shadow:0 22px 56px rgba(0,0,0,0.22);">
+          <div style="max-width:24ch; margin:0 auto; font-size:clamp(24px,2.8vw,34px); line-height:1.28; letter-spacing:-0.03em;">
+            爱是需要学习的能力，<br>
+            而你愿意来到这里，<br>
+            就已经迈出了最重要的一步。
+          </div>
+        </div>
+      </section>
+
+      <!-- Submit Preview -->
+      <section id="submit">
+        <div class="section-head">
+          <div class="kicker">Submit Your Story</div>
+          <h2>把你的故事讲给我们听</h2>
+          <div style="max-width:760px; margin:0 auto 28px; color:#6d6376; text-align:center; line-height:1.85;">
+            如果你也有一段不知道该跟谁说的感情经历，<br>欢迎匿名投稿给问情播客。
+          </div>
+        </div>
+        <div class="card card-lg" style="padding:34px; background:linear-gradient(180deg,#fff,#f7f0fb);">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;" class="submit-preview-grid">
+            <div>
+              <h3 style="margin:0 0 14px; font-size:clamp(26px,3vw,30px); letter-spacing:-0.02em;">支持匿名投稿</h3>
+              <p style="color:#6d6376; line-height:1.85; margin:0 0 20px;">投稿时不需要填写真实姓名或联系方式。</p>
+              <a class="btn btn-primary" href="/submit">开始投稿</a>
+            </div>
+            <div style="display:grid; gap:10px;">
+              <div style="background:rgba(141,81,187,0.05); border:1px solid rgba(141,81,187,0.10); border-radius:18px; padding:15px 16px; color:#5f4e6e; font-size:14px;">你的故事</div>
+              <div style="background:rgba(141,81,187,0.05); border:1px solid rgba(141,81,187,0.10); border-radius:18px; padding:15px 16px; color:#5f4e6e; font-size:14px;">你现在最困惑的问题是什么？</div>
+              <div style="background:rgba(141,81,187,0.05); border:1px solid rgba(141,81,187,0.10); border-radius:18px; padding:15px 16px; color:#5f4e6e; font-size:14px;">是否允许匿名用于节目创作</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Listen -->
+      <section id="listen">
+        <div class="section-head">
+          <div class="kicker">Listen</div>
+          <h2>在你习惯的平台收听</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:18px;" class="listen-grid">
+          {platforms.map((p) => (
+            <a href={p.url} target="_blank" rel="noopener noreferrer" class="card" style="padding:24px; display:flex; justify-content:space-between; align-items:center; text-decoration:none; color:#2c2433;">
+              <strong style="font-size:18px;">{p.name}</strong>
+              <span style="font-size:18px; color:#6d6376;">→</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- Newsletter -->
+      <section id="signup">
+        <div class="card card-lg" style="padding:28px; text-align:center; background:linear-gradient(180deg,#fff,#fbf8fd);">
+          <div class="kicker">Newsletter</div>
+          <h2 style="font-size:clamp(26px,3.5vw,38px);">想收到问情播客的更新？</h2>
+          <div style="max-width:620px; margin:0 auto 22px; color:#6d6376; line-height:1.85;">
+            留下你的邮箱，我们会偶尔给你发来新的内容与动态。
+          </div>
+          <form action="https://formspree.io/f/mjgpynwd" method="POST" style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+            <input type="hidden" name="_subject" value="[问情播客] 新订阅" />
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder="输入你的邮箱地址"
+              style="min-width:320px; padding:15px 18px; border-radius:16px; border:1px solid rgba(141,81,187,0.14); background:rgba(141,81,187,0.05); color:#2c2433; font-size:15px; outline:none;"
+            />
+            <button type="submit" class="btn btn-primary">订阅更新</button>
+          </form>
+        </div>
+      </section>
     </div>
-  </section>
+
+    <Footer />
+  </div>
 </BaseLayout>
+
+<style>
+  @media (max-width: 980px) {
+    .feature-grid { grid-template-columns: 1fr !important; }
+    .three-up { grid-template-columns: 1fr !important; }
+    .submit-preview-grid { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 720px) {
+    .feature-cover { min-height: 280px !important; }
+    .feature-copy { padding: 22px !important; }
+    .listen-grid { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 430px) {
+    h1 { font-size: clamp(38px, 11vw, 52px) !important; }
+  }
+</style>

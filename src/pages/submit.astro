@@ -1,58 +1,64 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
 import SubmitForm from '../components/SubmitForm.tsx';
 ---
 
 <BaseLayout
   title="投稿你的故事"
-  description="如果你也有一段不知道该跟谁说的感情经历，欢迎把故事讲给问情播客听。支持匿名投稿。"
+  description="如果你也有一段不知道该跟谁说的感情经历，欢迎匿名讲给问情播客听。"
 >
   <!-- Hero -->
-  <section class="bg-gradient-to-b from-brand-900 to-brand-800 py-20 md:py-28">
-    <div class="container-narrow mx-auto px-6 text-center">
-      <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">
-        投稿你的故事
-      </h1>
-      <p class="text-brand-200 text-base max-w-lg mx-auto leading-relaxed">
-        如果你也有一段不知道该跟谁说的感情经历，欢迎把故事讲给我们听。<br />
-        你可以匿名投稿。我们会认真阅读每一个故事，并尊重你的隐私。
-      </p>
+  <div class="wrap" style="padding:112px 0 84px; text-align:center;">
+    <div style="display:inline-block; padding:8px 14px; border-radius:999px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); color:#cec2d9; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:26px;">
+      Submit Your Story
     </div>
-  </section>
-
-  <!-- Form Section -->
-  <section class="section-padding bg-white">
-    <div class="container-narrow mx-auto max-w-2xl">
-      <p class="text-sm text-text-secondary/70 mb-10 text-center">
-        不是每一个故事都会被改编成节目，但每一个认真写下来的经历，我们都会认真对待。
-      </p>
-
-      <SubmitForm client:visible />
+    <h1 style="margin:0 auto 18px; max-width:10ch; font-size:clamp(40px,6vw,62px); line-height:1.06; letter-spacing:-0.05em; font-weight:700; text-align:center;">
+      把你的故事<br>讲给我们听
+    </h1>
+    <div style="max-width:640px; margin:0 auto; color:#cec2d9; font-size:clamp(17px,2vw,19px); line-height:1.85;">
+      如果你也有一段不知道该跟谁说的感情经历，<br>可以匿名讲给我们听。
     </div>
-  </section>
+  </div>
 
-  <!-- Privacy Block -->
-  <section class="section-padding bg-brand-50">
-    <div class="container-narrow mx-auto max-w-2xl">
-      <h2 class="text-lg font-bold text-text-primary mb-4">
-        关于隐私
-      </h2>
-      <div class="space-y-4 text-sm text-text-secondary leading-relaxed">
-        <p>
-          我们知道，很多感情故事都很私人。
-          如果你的投稿被用于节目创作，我们会默认进行匿名处理，并编辑掉可识别的个人信息。
-        </p>
-        <p>
-          为了保护你的隐私，我们可能会编辑掉可识别的细节。
-        </p>
-      </div>
+  <!-- Light section -->
+  <div class="light">
+    <div class="wrap">
 
-      <div class="mt-8 p-4 rounded-xl bg-brand-100/50 border border-brand-200/50">
-        <p class="text-xs text-text-secondary leading-relaxed">
-          问情播客不是心理治疗或危机干预服务。
-          如果你正在经历严重的人身安全风险、自伤想法或其他紧急危机，请尽快联系现实中的可信任对象或当地专业支持资源。
-        </p>
-      </div>
+      <!-- Notes -->
+      <section id="notes">
+        <div class="section-head">
+          <div class="kicker">Notes</div>
+          <h2>投稿前先看</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:18px;" class="notes-grid">
+          <div class="card" style="padding:24px;">
+            <strong style="display:block; font-size:19px; margin-bottom:8px;">默认匿名</strong>
+            <p style="margin:0; color:#6d6376; line-height:1.82; font-size:15px;">投稿时不需要填写真实姓名或联系方式。</p>
+          </div>
+          <div class="card" style="padding:24px;">
+            <strong style="display:block; font-size:19px; margin-bottom:8px;">我们会认真阅读</strong>
+            <p style="margin:0; color:#6d6376; line-height:1.82; font-size:15px;">每一个投稿我们都会认真看。<br>但不是每一个投稿都会被改编成节目。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Form -->
+      <section id="form">
+        <div class="section-head">
+          <div class="kicker">Form</div>
+          <h2>匿名投稿表单</h2>
+        </div>
+        <SubmitForm client:visible />
+      </section>
     </div>
-  </section>
+
+    <Footer />
+  </div>
 </BaseLayout>
+
+<style>
+  @media (max-width: 720px) {
+    .notes-grid { grid-template-columns: 1fr !important; }
+  }
+</style>
