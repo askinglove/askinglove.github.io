@@ -203,6 +203,7 @@ section {
     border-top-right-radius: 28px;
   }
   section { padding-bottom: 58px; }
+  .hidden-mobile { display: none; }
 }
 
 @media (max-width: 430px) {

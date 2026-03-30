@@ -18,8 +18,7 @@ import { platforms, socialLinks } from '../data/platforms';
       <span style="display:block; text-align:center;">不知道该跟谁说。</span>
     </h1>
     <div style="max-width:720px; margin:0 auto; color:#cec2d9; font-size:clamp(17px,2vw,19px); line-height:1.85;">
-      这里聊心动、失望、拉扯，也聊那些你不知道该跟谁说的话。<br>
-      像一个会认真听你说话的朋友，陪你把乱成一团的情绪理清一点。
+      这里聊心动、失望、拉扯，也聊那些你不知道该跟谁说的话。<br class="hidden-mobile">像一个会认真听你说话的朋友，陪你把乱成一团的情绪理清一点。
     </div>
     <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:34px;">
       <a class="btn btn-primary" href="/listen">开始收听</a>
@@ -52,7 +51,7 @@ import { platforms, socialLinks } from '../data/platforms';
                 你喜欢的，<br>到底是她，<br>还是那个深陷暗恋的自己？
               </div>
               <div style="color:#6d6376; font-size:16px; line-height:1.9; margin-bottom:18px; max-width:34ch;">
-                喜欢一个人喜欢到胃疼，准备好告白，<br>却发现对方在问你怎么送礼物给别的男生。
+                准备好告白，却发现对方在问你怎么送礼物给别的男生。
               </div>
               <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
                 <span class="tag">暗恋</span>
@@ -73,23 +72,21 @@ import { platforms, socialLinks } from '../data/platforms';
           <div class="kicker">About</div>
           <h2>问情播客是什么？</h2>
           <div class="sub">
-            你有没有过这样的深夜——翻来覆去睡不着，<br>
-            脑子里全是那个人，想不通 ta 为什么那样，<br>
-            也想不通自己为什么这么在意？
+            你有没有过这样的深夜——翻来覆去睡不着，脑子里全是那个人，想不通 ta 为什么那样，也想不通自己为什么这么在意？
           </div>
         </div>
         <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:18px;" class="three-up">
           <div class="card" style="padding:24px;">
             <strong style="display:block; font-size:20px; margin-bottom:8px;">不说教</strong>
-            <p style="margin:0; color:#6d6376; line-height:1.8; font-size:15px;">问情播客想做的，不是给你标准答案，也不想做那个告诉你"你应该怎样"的人。</p>
+            <p style="margin:0; color:#6d6376; line-height:1.8; font-size:15px;">不给标准答案，不告诉你"你应该怎样"。</p>
           </div>
           <div class="card" style="padding:24px;">
             <strong style="display:block; font-size:20px; margin-bottom:8px;">不评判</strong>
-            <p style="margin:0; color:#6d6376; line-height:1.8; font-size:15px;">这里讲的不只是故事，也是那些你不知道该怎么整理、也不知道该跟谁说的情绪。</p>
+            <p style="margin:0; color:#6d6376; line-height:1.8; font-size:15px;">接住那些你不知道该跟谁说的情绪。</p>
           </div>
           <div class="card" style="padding:24px;">
             <strong style="display:block; font-size:20px; margin-bottom:8px;">像朋友一样</strong>
-            <p style="margin:0; color:#6d6376; line-height:1.8; font-size:15px;">心动、失望、拉扯、放不下——都可以在这里慢慢说。</p>
+            <p style="margin:0; color:#6d6376; line-height:1.8; font-size:15px;">心动、失望、拉扯，都可以慢慢说。</p>
           </div>
         </div>
       </section>
@@ -105,28 +102,19 @@ import { platforms, socialLinks } from '../data/platforms';
         </div>
       </section>
 
-      <!-- Submit Preview -->
+      <!-- Submit CTA -->
       <section id="submit">
         <div class="section-head">
           <div class="kicker">Submit Your Story</div>
           <h2>把你的故事讲给我们听</h2>
           <div style="max-width:760px; margin:0 auto 28px; color:#6d6376; text-align:center; line-height:1.85;">
-            如果你也有一段不知道该跟谁说的感情经历，<br>欢迎匿名投稿给问情播客。
+            如果你也有一段不知道该跟谁说的感情经历，欢迎匿名投稿给问情播客。
           </div>
         </div>
-        <div class="card card-lg" style="padding:34px; background:linear-gradient(180deg,#fff,#f7f0fb);">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;" class="submit-preview-grid">
-            <div>
-              <h3 style="margin:0 0 14px; font-size:clamp(26px,3vw,30px); letter-spacing:-0.02em;">支持匿名投稿</h3>
-              <p style="color:#6d6376; line-height:1.85; margin:0 0 20px;">投稿时不需要填写真实姓名或联系方式。</p>
-              <a class="btn btn-primary" href="/submit">开始投稿</a>
-            </div>
-            <div style="display:grid; gap:10px;">
-              <div style="background:rgba(141,81,187,0.05); border:1px solid rgba(141,81,187,0.10); border-radius:18px; padding:15px 16px; color:#5f4e6e; font-size:14px;">你的故事</div>
-              <div style="background:rgba(141,81,187,0.05); border:1px solid rgba(141,81,187,0.10); border-radius:18px; padding:15px 16px; color:#5f4e6e; font-size:14px;">你现在最困惑的问题是什么？</div>
-              <div style="background:rgba(141,81,187,0.05); border:1px solid rgba(141,81,187,0.10); border-radius:18px; padding:15px 16px; color:#5f4e6e; font-size:14px;">是否允许匿名用于节目创作</div>
-            </div>
-          </div>
+        <div class="card card-lg" style="padding:34px; background:linear-gradient(180deg,#fff,#f7f0fb); text-align:center;">
+          <h3 style="margin:0 0 12px; font-size:clamp(26px,3vw,30px); letter-spacing:-0.02em;">支持匿名投稿</h3>
+          <p style="color:#6d6376; line-height:1.85; margin:0 0 24px;">投稿时不需要填写真实姓名或联系方式。</p>
+          <a class="btn btn-primary" href="/submit">开始投稿</a>
         </div>
       </section>
 
@@ -147,24 +135,16 @@ import { platforms, socialLinks } from '../data/platforms';
       </section>
 
       <!-- Newsletter -->
-      <section id="signup">
-        <div class="card card-lg" style="padding:28px; text-align:center; background:linear-gradient(180deg,#fff,#fbf8fd);">
+      <section id="signup" style="padding-bottom:72px;">
+        <div style="text-align:center;">
           <div class="kicker">Newsletter</div>
-          <h2 style="font-size:clamp(26px,3.5vw,38px);">想收到问情播客的更新？</h2>
-          <div style="max-width:620px; margin:0 auto 22px; color:#6d6376; line-height:1.85;">
-            留下你的邮箱，我们会偶尔给你发来新的内容与动态。
-          </div>
-          <form action="https://formspree.io/f/mjgpynwd" method="POST" style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-            <input type="hidden" name="_subject" value="[问情播客] 新订阅" />
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder="输入你的邮箱地址"
-              style="min-width:320px; padding:15px 18px; border-radius:16px; border:1px solid rgba(141,81,187,0.14); background:rgba(141,81,187,0.05); color:#2c2433; font-size:15px; outline:none;"
-            />
-            <button type="submit" class="btn btn-primary">订阅更新</button>
-          </form>
+          <h2 style="font-size:clamp(22px,3vw,30px); margin-bottom:10px;">想收到问情播客的更新？</h2>
+          <p style="color:#6d6376; font-size:15px; line-height:1.85; margin:0 0 20px;">
+            偶尔给你发来新的内容与动态。
+          </p>
+          <a class="btn btn-light" href="https://askinglove.substack.com" target="_blank" rel="noopener noreferrer" style="font-size:14px; padding:13px 20px;">
+            在 Substack 订阅
+          </a>
         </div>
       </section>
     </div>
@@ -177,7 +157,6 @@ import { platforms, socialLinks } from '../data/platforms';
   @media (max-width: 980px) {
     .feature-grid { grid-template-columns: 1fr !important; }
     .three-up { grid-template-columns: 1fr !important; }
-    .submit-preview-grid { grid-template-columns: 1fr !important; }
   }
   @media (max-width: 720px) {
     .feature-cover { min-height: 280px !important; }
