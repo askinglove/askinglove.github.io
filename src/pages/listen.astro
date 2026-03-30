@@ -21,6 +21,22 @@ import { platforms } from '../data/platforms';
   <!-- Light section -->
   <div class="light">
     <div class="wrap" style="max-width:560px;">
+      <!-- Player -->
+      <section style="padding-bottom:48px;">
+        <div style="border-radius:20px; overflow:hidden; border:1px solid rgba(44,36,51,0.07); box-shadow:0 4px 14px rgba(18,12,28,0.04);">
+          <iframe
+            src="https://player.rss.com/askinglove"
+            title="问情播客 AskingLove"
+            width="100%"
+            height="320"
+            loading="lazy"
+            style="border:none; display:block;"
+            allow="autoplay"
+          ></iframe>
+        </div>
+      </section>
+
+      <!-- Platforms -->
       <section style="padding-bottom:80px;">
         <div style="display:grid; gap:18px;" class="listen-grid">
           {platforms.map((p) => (
