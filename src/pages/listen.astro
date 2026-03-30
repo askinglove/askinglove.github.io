@@ -9,8 +9,8 @@ import { platforms } from '../data/platforms';
   description="在你习惯的平台收听问情播客 AskingLove。"
 >
   <!-- Hero -->
-  <div class="wrap" style="padding-top:112px; padding-bottom:84px; text-align:center;">
-    <h1 style="margin:0 auto 20px; font-size:clamp(38px,5.8vw,58px); line-height:1.06; letter-spacing:-0.05em; font-weight:700;">
+  <div class="wrap" style="padding-top:130px; padding-bottom:96px; text-align:center;">
+    <h1 style="margin:0 auto 24px; font-size:clamp(38px,5.8vw,58px); line-height:1.06; letter-spacing:-0.05em; font-weight:700;">
       在线收听
     </h1>
     <div style="color:#cec2d9; font-size:clamp(17px,2vw,19px); line-height:1.85;">
@@ -21,8 +21,9 @@ import { platforms } from '../data/platforms';
   <!-- Light section -->
   <div class="light">
     <div class="wrap" style="max-width:560px;">
+
       <!-- Player -->
-      <section style="padding-bottom:48px;">
+      <section style="padding-bottom:56px;">
         <div style="border-radius:20px; overflow:hidden; border:1px solid rgba(44,36,51,0.07); box-shadow:0 4px 14px rgba(18,12,28,0.04);">
           <iframe
             src="https://player.rss.com/askinglove"
@@ -36,15 +37,20 @@ import { platforms } from '../data/platforms';
       </section>
 
       <!-- Platforms -->
-      <section style="padding-bottom:80px;">
-        <div style="text-align:center; margin-bottom:24px;">
-          <h2 style="font-size:clamp(26px,3.5vw,34px); letter-spacing:-0.03em; margin:0 0 8px; color:#2c2433;">选择你的平台</h2>
+      <section style="padding-bottom:72px;">
+        <div style="text-align:center; margin-bottom:28px;">
+          <h2 style="font-size:clamp(26px,3.5vw,34px); letter-spacing:-0.03em; margin:0 0 10px; color:#2c2433;">选择你的平台</h2>
           <p style="color:#6d6376; font-size:15px; margin:0;">选一个你习惯的平台开始收听。</p>
         </div>
-        <div style="display:grid; gap:18px;" class="listen-grid">
+        <div style="display:grid; gap:16px;">
           {platforms.map((p) => (
             <a href={p.url} target="_blank" rel="noopener noreferrer" class="platform-card">
-              <strong>{p.name}</strong>
+              <div class="platform-left">
+                <strong>{p.name}</strong>
+                <span class="platform-desc">
+                  {p.name === 'Spotify' ? '在 Spotify 收听' : '在 RSS.com 收听'}
+                </span>
+              </div>
               <span class="platform-arrow">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -56,7 +62,7 @@ import { platforms } from '../data/platforms';
       </section>
 
       <!-- Newsletter -->
-      <section style="padding-bottom:64px;">
+      <section style="padding-bottom:72px;">
         <div class="newsletter-card">
           <h3 class="newsletter-title">不想错过问情播客的更新？</h3>
           <p class="newsletter-copy">订阅邮件，收到新节目、精选内容和最新动态。</p>
@@ -65,6 +71,7 @@ import { platforms } from '../data/platforms';
           </a>
         </div>
       </section>
+
     </div>
 
     <Footer />
@@ -72,76 +79,89 @@ import { platforms } from '../data/platforms';
 </BaseLayout>
 
 <style>
+  /* Platform cards */
   .platform-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 24px 28px;
-    min-height: 78px;
+    padding: 26px 28px;
+    min-height: 84px;
     background: white;
-    border: 1px solid rgba(44, 36, 51, 0.07);
+    border: 1px solid rgba(44, 36, 51, 0.08);
     border-radius: 20px;
-    box-shadow: 0 4px 14px rgba(18, 12, 28, 0.04);
+    box-shadow: 0 6px 18px rgba(18, 12, 28, 0.05);
     text-decoration: none;
     color: #2c2433;
     cursor: pointer;
     transition: all 0.2s ease;
   }
-  .platform-card strong {
+  .platform-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .platform-left strong {
     font-size: 18px;
     letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .platform-desc {
+    font-size: 13px;
+    color: #9688a3;
   }
   .platform-arrow {
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
-    background: rgba(141, 81, 187, 0.06);
+    border-radius: 12px;
+    background: rgba(141, 81, 187, 0.07);
     color: #8d51bb;
     transition: all 0.2s ease;
     flex-shrink: 0;
   }
   .platform-card:hover {
-    border-color: rgba(141, 81, 187, 0.20);
-    box-shadow: 0 10px 28px rgba(18, 12, 28, 0.09);
+    border-color: rgba(141, 81, 187, 0.22);
+    box-shadow: 0 12px 30px rgba(18, 12, 28, 0.10);
     transform: translateY(-2px);
   }
   .platform-card:hover .platform-arrow {
-    background: rgba(141, 81, 187, 0.12);
+    background: rgba(141, 81, 187, 0.14);
     transform: translateX(2px);
   }
   .platform-card:active {
     transform: translateY(0);
     box-shadow: 0 4px 12px rgba(18, 12, 28, 0.06);
   }
+
+  /* Newsletter card */
   .newsletter-card {
     text-align: center;
-    padding: 32px 28px;
+    padding: 40px 32px;
     background: white;
     border: 1px solid rgba(44, 36, 51, 0.06);
     border-radius: 20px;
-    box-shadow: 0 2px 8px rgba(18, 12, 28, 0.02);
+    box-shadow: 0 2px 10px rgba(18, 12, 28, 0.025);
   }
   .newsletter-title {
-    font-size: 20px;
+    font-size: 21px;
     font-weight: 700;
     letter-spacing: -0.02em;
     color: #2c2433;
-    margin: 0 0 10px;
+    margin: 0 0 14px;
   }
   .newsletter-copy {
     font-size: 15px;
     color: #9688a3;
     line-height: 1.8;
-    margin: 0 0 22px;
+    margin: 0 0 28px;
   }
   .newsletter-cta {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 15px 22px;
+    padding: 15px 24px;
     border-radius: 16px;
     background: linear-gradient(135deg, #8d51bb, #a66cd8);
     color: white;
