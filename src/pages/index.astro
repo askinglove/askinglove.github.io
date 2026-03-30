@@ -9,18 +9,18 @@ import { platforms, socialLinks } from '../data/platforms';
   description="一档关于爱情、关系与情绪的中文播客。这里聊心动、失望、拉扯，也聊那些你不知道该跟谁说的话。"
 >
   <!-- Hero -->
-  <div class="wrap" style="padding-top:120px; padding-bottom:100px; text-align:center;">
-    <div style="display:inline-block; padding:8px 14px; border-radius:999px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); color:#cec2d9; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:28px;">
+  <div class="wrap" style="padding-top:130px; padding-bottom:110px; text-align:center;">
+    <div style="display:inline-block; padding:8px 14px; border-radius:999px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); color:#cec2d9; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:32px;">
       问情播客 AskingLove
     </div>
-    <h1 style="margin:0 auto 38px; max-width:12ch; font-size:clamp(38px,5.8vw,58px); line-height:1.06; letter-spacing:-0.05em; font-weight:700; text-align:center;">
+    <h1 style="margin:0 auto 42px; max-width:12ch; font-size:clamp(38px,5.8vw,58px); line-height:1.06; letter-spacing:-0.05em; font-weight:700; text-align:center;">
       <span style="display:block; text-align:center;">有些话，</span>
       <span style="display:block; text-align:center;">不知道该跟谁说。</span>
     </h1>
     <div style="max-width:720px; margin:0 auto; color:#cec2d9; font-size:clamp(17px,2vw,19px); line-height:1.85;">
       这里聊心动、失望、拉扯，也聊那些你不知道该跟谁说的话。<br class="hidden-mobile">像一个会认真听你说话的朋友，陪你把乱成一团的情绪理清一点。
     </div>
-    <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:52px;">
+    <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:56px;">
       <a class="btn btn-primary" href="/listen">开始收听</a>
       <a class="btn btn-secondary" href="/submit">投稿你的故事</a>
     </div>
@@ -45,21 +45,21 @@ import { platforms, socialLinks } from '../data/platforms';
               <small style="color:#d8c6e6; font-size:11px; letter-spacing:0.16em; text-transform:uppercase;">问情播客 AskingLove</small>
             </div>
             <!-- Copy -->
-            <div style="padding:44px 36px; display:flex; flex-direction:column; justify-content:center;" class="feature-copy">
-              <div style="color:#6d6376; font-size:14px; margin-bottom:12px;">入口推荐</div>
-              <div style="font-size:clamp(30px,3vw,40px); line-height:1.08; letter-spacing:-0.03em; margin-bottom:16px; font-weight:700;">
+            <div style="padding:44px 40px; display:flex; flex-direction:column; justify-content:center;" class="feature-copy">
+              <div style="color:#9688a3; font-size:13px; letter-spacing:0.04em; margin-bottom:14px;">入口推荐</div>
+              <div style="font-size:clamp(30px,3vw,40px); line-height:1.08; letter-spacing:-0.03em; margin-bottom:18px; font-weight:700;">
                 你喜欢的，<br>到底是她，<br>还是那个深陷暗恋的自己？
               </div>
-              <div style="color:#6d6376; font-size:16px; line-height:1.9; margin-bottom:22px; max-width:34ch;">
+              <div style="color:#6d6376; font-size:16px; line-height:1.9; margin-bottom:24px; max-width:34ch;">
                 准备好告白，才发现对方<br>在问你怎么送礼物给别的男生。
               </div>
-              <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px;">
-                <span style="padding:7px 12px; border-radius:999px; background:#f2e8f8; color:#9672b0; font-size:13px;">暗恋</span>
-                <span style="padding:7px 12px; border-radius:999px; background:#f2e8f8; color:#9672b0; font-size:13px;">单相思</span>
-                <span style="padding:7px 12px; border-radius:999px; background:#f2e8f8; color:#9672b0; font-size:13px;">放不下</span>
+              <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:30px;">
+                <span style="padding:6px 12px; border-radius:999px; background:rgba(141,81,187,0.06); color:#b49cc8; font-size:12px; letter-spacing:0.02em;">暗恋</span>
+                <span style="padding:6px 12px; border-radius:999px; background:rgba(141,81,187,0.06); color:#b49cc8; font-size:12px; letter-spacing:0.02em;">单相思</span>
+                <span style="padding:6px 12px; border-radius:999px; background:rgba(141,81,187,0.06); color:#b49cc8; font-size:12px; letter-spacing:0.02em;">放不下</span>
               </div>
               <div>
-                <a class="btn btn-primary" style="padding:16px 28px; font-size:16px;" href="/episodes/dark-crush">收听这一集</a>
+                <a class="btn btn-primary" style="padding:17px 30px; font-size:16px;" href="/episodes/dark-crush">收听这一集</a>
               </div>
             </div>
           </div>
@@ -128,21 +128,22 @@ import { platforms, socialLinks } from '../data/platforms';
           {platforms.map((p) => (
             <a href={p.url} target="_blank" rel="noopener noreferrer" class="platform-card">
               <strong>{p.name}</strong>
-              <span class="platform-arrow">→</span>
+              <span class="platform-arrow">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
             </a>
           ))}
         </div>
       </section>
 
       <!-- Newsletter -->
-      <section id="signup" style="padding-bottom:64px;">
-        <div style="text-align:center;">
-          <div class="kicker" style="font-size:11px;">Newsletter</div>
-          <h2 style="font-size:clamp(20px,2.5vw,26px); margin-bottom:8px;">想收到问情播客的更新？</h2>
-          <p style="color:#9688a3; font-size:14px; line-height:1.85; margin:0 0 18px;">
-            留下你的邮箱，偶尔收到新的内容与动态。
-          </p>
-          <a href="https://askinglovepod.substack.com" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:6px; padding:11px 18px; border-radius:14px; border:1px solid rgba(44,36,51,0.10); background:white; color:#6d6376; font-size:14px; font-weight:500; text-decoration:none; transition:all 0.2s;" class="newsletter-btn">
+      <section id="signup" style="padding-bottom:56px;">
+        <div style="text-align:center; opacity:0.85;">
+          <p style="color:#9688a3; font-size:13px; letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin:0 0 8px;">Newsletter</p>
+          <p style="color:#6d6376; font-size:15px; margin:0 0 14px;">留下你的邮箱，偶尔收到新的内容与动态。</p>
+          <a href="https://askinglovepod.substack.com" target="_blank" rel="noopener noreferrer" class="newsletter-btn">
             在 Substack 订阅
           </a>
         </div>
@@ -154,18 +155,18 @@ import { platforms, socialLinks } from '../data/platforms';
 </BaseLayout>
 
 <style>
-  /* About cards — uniform height, padding, shadow */
+  /* About cards — uniform */
   .about-card {
     padding: 28px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 12px rgba(18, 12, 28, 0.025) !important;
-    border-color: rgba(44, 36, 51, 0.06) !important;
+    box-shadow: 0 2px 8px rgba(18, 12, 28, 0.02) !important;
+    border-color: rgba(44, 36, 51, 0.05) !important;
   }
   .about-card strong {
     display: block;
     font-size: 20px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     letter-spacing: -0.01em;
   }
   .about-card p {
@@ -176,56 +177,68 @@ import { platforms, socialLinks } from '../data/platforms';
     flex: 1;
   }
 
-  /* Platform cards — strong clickable feel */
+  /* Platform cards */
   .platform-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 28px 28px;
-    min-height: 80px;
+    padding: 24px 28px;
+    min-height: 78px;
     background: white;
-    border: 1px solid rgba(44, 36, 51, 0.08);
-    border-radius: 24px;
-    box-shadow: 0 6px 20px rgba(18, 12, 28, 0.05);
+    border: 1px solid rgba(44, 36, 51, 0.07);
+    border-radius: 20px;
+    box-shadow: 0 4px 14px rgba(18, 12, 28, 0.04);
     text-decoration: none;
     color: #2c2433;
     cursor: pointer;
     transition: all 0.2s ease;
   }
   .platform-card strong {
-    font-size: 19px;
+    font-size: 18px;
     letter-spacing: -0.01em;
   }
   .platform-arrow {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
     background: rgba(141, 81, 187, 0.06);
     color: #8d51bb;
-    font-size: 16px;
     transition: all 0.2s ease;
     flex-shrink: 0;
   }
   .platform-card:hover {
-    border-color: rgba(141, 81, 187, 0.22);
-    box-shadow: 0 12px 32px rgba(18, 12, 28, 0.10);
-    transform: translateY(-3px);
+    border-color: rgba(141, 81, 187, 0.20);
+    box-shadow: 0 10px 28px rgba(18, 12, 28, 0.09);
+    transform: translateY(-2px);
   }
   .platform-card:hover .platform-arrow {
     background: rgba(141, 81, 187, 0.12);
     transform: translateX(2px);
   }
   .platform-card:active {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(18, 12, 28, 0.07);
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(18, 12, 28, 0.06);
   }
 
-  /* Newsletter button — subdued */
+  /* Newsletter — very subdued */
+  .newsletter-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(44, 36, 51, 0.08);
+    background: transparent;
+    color: #9688a3;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
   .newsletter-btn:hover {
-    border-color: rgba(141, 81, 187, 0.16);
+    border-color: rgba(141, 81, 187, 0.14);
     color: #8d51bb;
   }
 
