@@ -8,69 +8,51 @@ import Footer from '../components/Footer.astro';
   description="了解问情播客 AskingLove —— 一档关于爱情、关系与情绪的中文播客。"
 >
   <!-- Hero -->
-  <div class="wrap" style="padding:112px 0 84px; text-align:center;">
-    <div style="display:inline-block; padding:8px 14px; border-radius:999px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); color:#cec2d9; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:26px;">
-      About
-    </div>
-    <h1 style="margin:0 auto 18px; max-width:14ch; font-size:clamp(38px,5.8vw,58px); line-height:1.06; letter-spacing:-0.05em; font-weight:700;">
+  <div class="wrap" style="padding-top:110px; padding-bottom:56px; text-align:center;">
+    <h1 style="margin:0 auto 20px; font-size:clamp(38px,5.8vw,58px); line-height:1.06; letter-spacing:-0.05em; font-weight:700;">
       关于问情播客
     </h1>
-    <div style="max-width:640px; margin:0 auto; color:#cec2d9; font-size:clamp(17px,2vw,19px); line-height:1.85;">
-      AskingLove
+    <div style="color:#cec2d9; font-size:clamp(17px,2vw,19px); line-height:1.85;">
+      一档关于爱情、关系与情绪的中文播客。
     </div>
   </div>
 
   <!-- Light section -->
-  <div class="light">
-    <div class="wrap">
+  <div class="light" style="padding-top:64px;">
+    <div class="wrap" style="max-width:680px;">
 
-      <!-- What is it -->
-      <section>
-        <div class="section-head">
-          <div class="kicker">What</div>
-          <h2>问情播客是什么？</h2>
-          <div class="sub">
-            你有没有过这样的深夜——翻来覆去睡不着，<br>
-            脑子里全是那个人，想不通 ta 为什么那样，<br>
-            也想不通自己为什么这么在意？
-          </div>
-        </div>
-        <div style="max-width:680px; margin:0 auto; color:#6d6376; font-size:16px; line-height:1.88; text-align:center;">
-          <p>问情播客想做的，不是给你标准答案。我们不说教，不评判，也不想做那个告诉你"你应该怎样"的人。只想像一个会认真听你说话的朋友，陪你把乱成一团的情绪理清一点。</p>
+      <!-- What -->
+      <section style="padding-bottom:64px;">
+        <h2 style="font-size:clamp(26px,3.5vw,34px); letter-spacing:-0.03em; margin:0 0 16px; color:#2c2433; text-align:center;">问情播客是什么？</h2>
+        <div style="color:#6d6376; font-size:16px; line-height:1.88; text-align:center;">
+          <p style="margin:0 0 20px;">你有没有过这样的深夜——翻来覆去睡不着，脑子里全是那个人，也想不通自己为什么这么在意？</p>
+          <p style="margin:0;">问情播客想做的，不是给你标准答案。我们不说教，不评判，也不想做那个告诉你"你应该怎样"的人。只想像一个会认真听你说话的朋友，陪你把乱成一团的情绪理清一点。</p>
         </div>
       </section>
 
       <!-- Why -->
-      <section>
-        <div class="section-head">
-          <div class="kicker">Why</div>
-          <h2>为什么做这档播客？</h2>
-        </div>
-        <div style="max-width:680px; margin:0 auto; color:#6d6376; font-size:16px; line-height:1.88; text-align:center;">
-          <p>在亲密关系里，我们常常不知道该跟谁说。跟朋友聊怕被评判，跟家人说怕被念叨，跟对方说又怕把关系弄得更复杂。</p>
-          <p>问情播客想做的，是成为那个可以安全说出口的地方。你不需要被评价，也不需要装作已经想通了。你只需要把故事慢慢讲出来。</p>
+      <section style="padding-bottom:64px;">
+        <h2 style="font-size:clamp(26px,3.5vw,34px); letter-spacing:-0.03em; margin:0 0 16px; color:#2c2433; text-align:center;">为什么做这档播客？</h2>
+        <div style="color:#6d6376; font-size:16px; line-height:1.88; text-align:center;">
+          <p style="margin:0 0 20px;">在亲密关系里，我们常常不知道该跟谁说。跟朋友聊怕被评判，跟家人说怕被念叨，跟对方说又怕把关系弄得更复杂。</p>
+          <p style="margin:0;">问情播客想做的，是成为那个可以安全说出口的地方。你不需要被评价，也不需要装作已经想通了。你只需要把故事慢慢讲出来。</p>
         </div>
       </section>
 
       <!-- Topics -->
-      <section>
-        <div class="section-head">
-          <div class="kicker">Topics</div>
-          <h2>我们聊什么？</h2>
-        </div>
-        <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px; max-width:600px; margin:0 auto;" class="topic-grid">
+      <section style="padding-bottom:64px;">
+        <h2 style="font-size:clamp(26px,3.5vw,34px); letter-spacing:-0.03em; margin:0 0 20px; color:#2c2433; text-align:center;">我们聊什么？</h2>
+        <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; max-width:500px; margin:0 auto;">
           {['暗恋与心动', '分手与放下', '信任与背叛', '沟通与误解', '异地与等待', '婚姻与承诺', '自我价值', '家庭期待', '那些说不出口的'].map((topic) => (
-            <div class="card" style="padding:16px 20px; text-align:center;">
-              <span style="font-size:14px; color:#6d6376;">{topic}</span>
-            </div>
+            <span style="padding:8px 16px; border-radius:999px; background:rgba(141,81,187,0.06); color:#8d6ba3; font-size:14px;">{topic}</span>
           ))}
         </div>
       </section>
 
       <!-- Belief -->
-      <section>
-        <div style="text-align:center; padding:74px 28px; border-radius:34px; background:radial-gradient(circle at 50% 10%, rgba(141,81,187,0.18), transparent 30%), linear-gradient(180deg,#171123,#110b18); color:white; box-shadow:0 22px 56px rgba(0,0,0,0.22);">
-          <div style="max-width:24ch; margin:0 auto; font-size:clamp(24px,2.8vw,34px); line-height:1.28; letter-spacing:-0.03em;">
+      <section style="padding-bottom:64px;">
+        <div style="text-align:center; padding:56px 28px; border-radius:28px; background:radial-gradient(circle at 50% 10%, rgba(141,81,187,0.18), transparent 30%), linear-gradient(180deg,#171123,#110b18); color:white; box-shadow:0 18px 44px rgba(0,0,0,0.18);">
+          <div style="max-width:24ch; margin:0 auto; font-size:clamp(22px,2.6vw,30px); line-height:1.32; letter-spacing:-0.03em;">
             爱是需要学习的能力，<br>
             而你愿意来到这里，<br>
             就已经迈出了最重要的一步。
@@ -79,20 +61,70 @@ import Footer from '../components/Footer.astro';
       </section>
 
       <!-- CTA -->
-      <section style="text-align:center;">
+      <section style="text-align:center; padding-bottom:64px;">
         <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
-          <a class="btn btn-primary" href="/listen">开始收听</a>
-          <a class="btn btn-light" href="/submit">投稿你的故事</a>
+          <a class="btn btn-primary" href="/listen" style="padding:15px 28px; font-size:16px;">开始收听</a>
+          <a class="btn btn-light" href="/submit" style="padding:15px 28px; font-size:16px;">投稿你的故事</a>
         </div>
       </section>
+
+      <!-- Newsletter -->
+      <section style="padding-bottom:56px;">
+        <div class="newsletter-card">
+          <h3 class="newsletter-title">不想错过问情播客的更新？</h3>
+          <p class="newsletter-copy">订阅邮件，收到新节目、精选内容和最新动态。</p>
+          <a href="https://askinglovepod.substack.com" target="_blank" rel="noopener noreferrer" class="newsletter-cta">
+            在 Substack 订阅
+          </a>
+        </div>
+      </section>
+
     </div>
 
-    <Footer />
+    <div style="padding-top:8px;">
+      <Footer />
+    </div>
   </div>
 </BaseLayout>
 
 <style>
-  @media (max-width: 720px) {
-    .topic-grid { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+  .newsletter-card {
+    text-align: center;
+    padding: 32px 32px;
+    background: white;
+    border: 1px solid rgba(44, 36, 51, 0.06);
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(18, 12, 28, 0.025);
+  }
+  .newsletter-title {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #2c2433;
+    margin: 0 0 12px;
+  }
+  .newsletter-copy {
+    font-size: 15px;
+    color: #9688a3;
+    line-height: 1.8;
+    margin: 0 0 24px;
+  }
+  .newsletter-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 28px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #8d51bb, #a66cd8);
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 6px 16px rgba(141, 81, 187, 0.14);
+    transition: all 0.2s ease;
+  }
+  .newsletter-cta:hover {
+    box-shadow: 0 10px 22px rgba(141, 81, 187, 0.20);
+    transform: translateY(-1px);
   }
 </style>

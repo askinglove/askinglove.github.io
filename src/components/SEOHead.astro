@@ -49,3 +49,13 @@ const ogImageUrl = new URL(ogImage, Astro.site).href;
 <!-- Preconnect to Google Fonts for Noto Sans SC fallback -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<!-- GoatCounter Analytics (privacy-friendly, no cookies) -->
+<!-- To activate: create account at goatcounter.com, replace YOUR_SITE_CODE -->
+{import.meta.env.PROD && (
+  <script
+    data-goatcounter="https://askinglove.goatcounter.com/count"
+    async
+    src="//gc.zgo.at/count.js"
+  />
+)}

@@ -24,3 +24,4 @@ Thumbs.db
 
 # Mockups (design reference only)
 mockups/
+.playwright-mcp/
