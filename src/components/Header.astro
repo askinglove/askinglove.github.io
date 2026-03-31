@@ -9,7 +9,7 @@ const currentPath = Astro.url.pathname;
     <!-- Brand -->
     <a href="/" class="brand">
       <div class="mark">🎧</div>
-      <div>问情播客 AskingLove</div>
+      <div>问情播客 <span class="brand-en">AskingLove</span></div>
     </a>
 
     <!-- Desktop Nav -->
@@ -52,7 +52,13 @@ const currentPath = Astro.url.pathname;
     justify-content: space-between;
     align-items: center;
     padding: 16px 0;
-    gap: 32px;
+    gap: 40px;
+  }
+  .brand-en {
+    display: inline;
+  }
+  @media (max-width: 1100px) {
+    .brand-en { display: none; }
   }
   .brand {
     display: flex;
