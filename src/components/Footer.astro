@@ -4,7 +4,7 @@ import { socialLinks } from '../data/platforms';
 
 <footer style="background:#140f1c; color:#cec2d9; padding:42px 0 56px;">
   <div class="wrap" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px; align-items:center;">
-    <div><strong style="color:white;">问情播客 AskingLove</strong></div>
+    <div><a href="/" style="color:white; text-decoration:none;"><strong>问情播客 AskingLove</strong></a></div>
     <div style="display:flex; gap:18px; font-size:14px;">
       {socialLinks.map((s) => (
         <a href={s.url} target="_blank" rel="noopener noreferrer" style="color:#cec2d9; text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#cec2d9'">
