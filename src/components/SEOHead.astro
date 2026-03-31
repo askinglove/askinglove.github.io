@@ -50,12 +50,16 @@ const ogImageUrl = new URL(ogImage, Astro.site).href;
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-<!-- GoatCounter Analytics (privacy-friendly, no cookies) -->
-<!-- To activate: create account at goatcounter.com, replace YOUR_SITE_CODE -->
+<!-- Google Analytics (GA4) -->
+<!-- To activate: replace G-XXXXXXXXXX with your GA4 measurement ID -->
 {import.meta.env.PROD && (
-  <script
-    data-goatcounter="https://askinglove.goatcounter.com/count"
-    async
-    src="//gc.zgo.at/count.js"
-  />
+  <>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+  </>
 )}
