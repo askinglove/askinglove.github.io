@@ -256,7 +256,11 @@ function formatEpisodeShareText(opts: {
     takeaways.forEach((t, i) => lines.push(`${i + 1}. ${t}`));
   }
 
-  lines.push('', '想一想', reflection, '', `收听本集：${episodeUrl}`, `投稿故事：${submitUrl}`);
+  lines.push('', '想一想', reflection, '', `收听本集：${episodeUrl}`);
+
+  if (episode.spotifyUrl) lines.push(`Spotify：${episode.spotifyUrl}`);
+  if (episode.appleUrl) lines.push(`Apple Podcasts：${episode.appleUrl}`);
+  lines.push(`投稿故事：${submitUrl}`);
 
   if (related.length > 0) {
     lines.push('', '相关节目');

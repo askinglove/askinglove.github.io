@@ -65,6 +65,19 @@ Curated homepage pack: `src/data/start-here.ts` (list of RSS ids).
 
 `src/data/platforms.ts` — Spotify, Apple Podcasts, YouTube, RSS.com + Instagram/Threads/YouTube footer links.
 
+### Per-episode store deep links
+
+`src/data/episode-store-links.json` maps RSS episode id → Apple / Spotify episode URLs.
+
+```bash
+npm run sync:store-links
+```
+
+- **Apple:** always via public iTunes Lookup API.
+- **Spotify:** best with `SPOTIFY_CLIENT_ID` + `SPOTIFY_CLIENT_SECRET` (client credentials). Without them, the script uses an embed token + search (rate-limited).
+
+Episode pages prefer deep links (“打开本集”); if missing, they fall back to the show page.
+
 ## Analytics
 
 GA4 loads **only** when `PUBLIC_GA_ID` is set to a real id (`G-…`) in the build environment. Placeholder IDs are never shipped.

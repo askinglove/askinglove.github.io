@@ -5,6 +5,7 @@
 
 import overridesJson from '../data/episode-overrides.json';
 import { autoTag } from '../data/episode-tags';
+import { getStoreLinks } from './store-links';
 
 export const RSS_FEED_URL = 'https://media.rss.com/askinglove/feed.xml';
 
@@ -41,6 +42,10 @@ export type Episode = {
   coverImage?: string;
   rssEmbedUrl: string;
   rssPageUrl: string;
+  /** Per-episode Spotify deep link when known. */
+  spotifyUrl?: string;
+  /** Per-episode Apple Podcasts deep link when known. */
+  appleUrl?: string;
   tags: string[];
   featured: boolean;
   draft: boolean;
@@ -196,6 +201,8 @@ function parseItem(itemXml: string): Episode | null {
     coverImage,
     rssEmbedUrl: `https://player.rss.com/askinglove/${rssId}`,
     rssPageUrl: `https://rss.com/podcasts/askinglove/${rssId}`,
+    spotifyUrl: getStoreLinks(rssId).spotifyUrl,
+    appleUrl: getStoreLinks(rssId).appleUrl,
     tags,
     featured: ov.featured === true,
     draft: ov.draft === true,
