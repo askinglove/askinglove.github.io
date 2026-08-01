@@ -7,6 +7,9 @@ dist/
 # Generated YouTube caption exports (regenerate with npm run transcript:srt)
 exports/
 
+# Raw ASR dumps
+raw/
+
 # Astro
 .astro/
 

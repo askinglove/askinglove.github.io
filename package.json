@@ -11,7 +11,8 @@
     "sync:store-links": "node scripts/sync-store-links.mjs",
     "transcript:new": "node scripts/new-transcript.mjs",
     "transcript:srt": "node scripts/export-youtube-captions.mjs",
-    "transcript:youtube": "node scripts/export-youtube-description.mjs"
+    "transcript:youtube": "node scripts/export-youtube-description.mjs",
+    "transcript:all": "python3 scripts/transcribe-all.py --model base"
   },
   "dependencies": {
     "@astrojs/preact": "^4.0.0",

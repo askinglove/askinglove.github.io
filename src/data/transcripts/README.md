@@ -39,10 +39,25 @@ disclaimer: 文稿经整理，与音频可能略有出入；以表达清晰为�
 - 会在构建时转成简体并渲染  
 - **≥ 约 400 字** 才显示「阅读全文」（完整成稿建议 1200+）
 
-## 脚手架
+## 从音频批量生成（faster-whisper）
+
+```bash
+# 需要: pip install faster-whisper opencc-python-reimplemented, ffmpeg
+npm run transcript:all                 # 全部集
+python3 scripts/transcribe-all.py --ids 2664929 --force
+```
+
+产出：
+- `src/data/transcripts/{id}.md` — 正文（阅读版，简体）
+- `src/data/captions/{id}.srt` — YouTube 字幕（带真实时间轴）
+- `raw/transcripts/{id}.json` — 原始识别结果（本地调试，默认不提交）
+
+## 脚手架 / 导出
 
 ```bash
 npm run transcript:new -- 2664929
-npm run transcript:srt -- 2664929
-npm run transcript:youtube -- 2664929
+npm run transcript:srt -- 2664929      # 若无 whisper 时的均匀估时字幕
+npm run transcript:youtube -- 2664929  # 短描述（含阅读全文链接）
 ```
+
+**注意：** Whisper 识别会有错字，上线前建议人工通读关键集；字幕可在 YouTube Studio 再微调。
