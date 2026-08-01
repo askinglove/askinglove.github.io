@@ -1,0 +1,203 @@
+---
+import type { ShowNotes } from '../lib/show-notes';
+import type { Episode } from '../lib/rss';
+import { episodeHref } from '../lib/episodes';
+
+interface Props {
+  notes: ShowNotes;
+  related: Episode[];
+}
+
+const { notes, related } = Astro.props;
+const relatedTwo = related.slice(0, 2);
+---
+
+<article class="show-notes" id="show-notes">
+  <h2 class="sn-h2">节目笔记</h2>
+
+  <section class="sn-section">
+    <h3 class="sn-h3">这一集在说什么</h3>
+    <p class="sn-hook">{notes.hook}</p>
+    {notes.setup && <p class="sn-setup">{notes.setup}</p>}
+  </section>
+
+  {(notes.concept || notes.takeaways.length > 0) && (
+    <section class="sn-section">
+      {notes.concept ? (
+        <>
+          <h3 class="sn-h3">关键概念 · {notes.concept.name}</h3>
+          {notes.concept.blurb && <p class="sn-setup">{notes.concept.blurb}</p>}
+          {notes.takeaways.length > 0 && (
+            <ul class="sn-list">
+              {notes.takeaways.map((t) => (
+                <li>{t}</li>
+              ))}
+            </ul>
+          )}
+        </>
+      ) : (
+        <>
+          <h3 class="sn-h3">你可以带走的</h3>
+          <ul class="sn-list">
+            {notes.takeaways.map((t) => (
+              <li>{t}</li>
+            ))}
+          </ul>
+        </>
+      )}
+    </section>
+  )}
+
+  <section class="sn-section sn-reflect">
+    <h3 class="sn-h3">想一想</h3>
+    <p class="sn-reflection">{notes.reflection}</p>
+  </section>
+
+  <section class="sn-section">
+    <h3 class="sn-h3">链接</h3>
+    <ul class="sn-links">
+      <li>
+        <span class="sn-link-label">本集</span>
+        <a href={notes.episodeUrl}>{notes.episodeUrl}</a>
+      </li>
+      <li>
+        <span class="sn-link-label">投稿</span>
+        <a href={notes.submitUrl}>匿名讲给你的故事</a>
+      </li>
+      <li>
+        <span class="sn-link-label">官网</span>
+        <a href={notes.showUrl}>{notes.showUrl}</a>
+      </li>
+    </ul>
+  </section>
+
+  {relatedTwo.length > 0 && (
+    <section class="sn-section">
+      <h3 class="sn-h3">相关节目</h3>
+      <ul class="sn-related">
+        {relatedTwo.map((rel) => (
+          <li>
+            <a href={episodeHref(rel)}>{rel.title}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+</article>
+
+<style>
+  .show-notes {
+    text-align: left;
+  }
+  .sn-h2 {
+    font-size: clamp(22px, 3vw, 28px);
+    letter-spacing: -0.03em;
+    margin: 0 0 22px;
+    color: #2c2433;
+    font-weight: 700;
+  }
+  .sn-section {
+    margin-bottom: 28px;
+  }
+  .sn-section:last-child {
+    margin-bottom: 0;
+  }
+  .sn-h3 {
+    margin: 0 0 12px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #8d51bb;
+  }
+  .sn-hook {
+    margin: 0 0 12px;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.55;
+    color: #2c2433;
+    letter-spacing: -0.02em;
+  }
+  .sn-setup {
+    margin: 0;
+    color: #6d6376;
+    font-size: 16px;
+    line-height: 1.9;
+  }
+  .sn-list {
+    margin: 10px 0 0;
+    padding: 0 0 0 1.15em;
+    color: #6d6376;
+    font-size: 16px;
+    line-height: 1.85;
+  }
+  .sn-list li {
+    margin-bottom: 8px;
+  }
+  .sn-list li:last-child {
+    margin-bottom: 0;
+  }
+  .sn-reflect {
+    padding: 20px 22px;
+    border-radius: 18px;
+    background: rgba(141, 81, 187, 0.06);
+    border: 1px solid rgba(141, 81, 187, 0.1);
+  }
+  .sn-reflection {
+    margin: 0;
+    color: #2c2433;
+    font-size: 17px;
+    line-height: 1.75;
+    font-weight: 500;
+  }
+  .sn-links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+  }
+  .sn-links li {
+    display: grid;
+    grid-template-columns: 3.5em 1fr;
+    gap: 10px;
+    align-items: baseline;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .sn-link-label {
+    color: #9688a3;
+    font-size: 13px;
+  }
+  .sn-links a {
+    color: #8d51bb;
+    text-decoration: none;
+    word-break: break-all;
+  }
+  .sn-links a:hover {
+    text-decoration: underline;
+  }
+  .sn-related {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+  }
+  .sn-related a {
+    display: block;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: white;
+    border: 1px solid rgba(44, 36, 51, 0.07);
+    color: #2c2433;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .sn-related a:hover {
+    border-color: rgba(141, 81, 187, 0.22);
+    box-shadow: 0 6px 16px rgba(18, 12, 28, 0.06);
+  }
+</style>

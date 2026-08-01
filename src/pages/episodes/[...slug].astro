@@ -3,9 +3,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Footer from '../../components/Footer.astro';
 import AudioPlayer from '../../components/AudioPlayer.astro';
 import JsonLd from '../../components/JsonLd.astro';
+import ShowNotesBlock from '../../components/ShowNotesBlock.astro';
+import ShareBar from '../../components/ShareBar.tsx';
 import { platforms } from '../../data/platforms';
 import { show } from '../../data/show';
-import type { Episode } from '../../lib/rss';
+import overridesJson from '../../data/episode-overrides.json';
+import type { Episode, EpisodeOverride } from '../../lib/rss';
 import { getPublishedEpisodes } from '../../lib/rss';
 import {
   episodeHref,
@@ -17,6 +20,7 @@ import {
   tagHref,
 } from '../../lib/episodes';
 import { podcastEpisodeJsonLd } from '../../lib/jsonld';
+import { buildShowNotes } from '../../lib/show-notes';
 
 export async function getStaticPaths() {
   return getEpisodeStaticPaths();
@@ -32,6 +36,9 @@ const related = getRelatedEpisodes(episode, all, 3);
 const formattedDate = formatEpisodeDate(episode.pubDate);
 const canonicalUrl = new URL(episodeHref(episode), show.url).href;
 
+const ov = (overridesJson as Record<string, EpisodeOverride>)[episode.rssId];
+const showNotes = buildShowNotes(episode, related, ov);
+
 /** Tags: link only when another episode shares the same tag. */
 const tagItems = episode.tags.map((tag) => ({
   tag,
@@ -42,9 +49,6 @@ const metaParts: string[] = [];
 if (episode.episodeNumber != null) metaParts.push(`第 ${episode.episodeNumber} 集`);
 if (formattedDate) metaParts.push(formattedDate);
 if (episode.duration) metaParts.push(episode.duration);
-
-const bodySectionTitle = episode.transcript ? '文稿' : episode.showNotes ? '节目笔记' : null;
-const bodySectionText = episode.transcript || episode.showNotes || '';
 
 const platformLinks = [
   ...platforms.map((p) => ({
@@ -117,32 +121,39 @@ const nextEp = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : undefined
         </section>
       )}
 
-      <!-- Hook -->
+      <!-- Structured show notes -->
       <section style="padding-bottom:36px;">
-        <p class="hook-text">{episode.hook}</p>
+        <ShowNotesBlock notes={showNotes} related={related} />
       </section>
 
-      <!-- 文稿 / 节目笔记 -->
+      <!-- Share episode + show -->
       <section style="padding-bottom:48px;">
-        {bodySectionTitle && bodySectionText ? (
-          <>
-            <h2 style="font-size:clamp(22px,3vw,28px); letter-spacing:-0.03em; margin:0 0 18px; color:#2c2433; font-weight:700;">
-              {bodySectionTitle}
-            </h2>
-            <div class="notes-body">
-              {bodySectionText.split(/\n\n+/).map((para) => (
-                <p>{para}</p>
-              ))}
-            </div>
-          </>
-        ) : (
-          <div class="notes-empty">
-            <p>本集文稿整理中。</p>
-          </div>
-        )}
+        <ShareBar
+          client:visible
+          episodeUrl={showNotes.episodeUrl}
+          episodeTitle={episode.title}
+          shareText={showNotes.shareText}
+          showUrl={showNotes.showUrl}
+          showShareText={showNotes.showShareText}
+          submitUrl={showNotes.submitUrl}
+        />
       </section>
 
-      <!-- Related episodes -->
+      <!-- Full transcript if manually provided -->
+      {episode.transcript && (
+        <section style="padding-bottom:48px;">
+          <h2 style="font-size:clamp(22px,3vw,28px); letter-spacing:-0.03em; margin:0 0 18px; color:#2c2433; font-weight:700;">
+            文稿
+          </h2>
+          <div class="notes-body">
+            {episode.transcript.split(/\n\n+/).map((para) => (
+              <p>{para}</p>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Related episodes (cards) -->
       {related.length > 0 && (
         <section class="related-episodes" style="padding-bottom:48px;">
           <h2 style="font-size:clamp(22px,3vw,28px); letter-spacing:-0.03em; margin:0 0 18px; color:#2c2433; font-weight:700;">

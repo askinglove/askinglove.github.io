@@ -39,13 +39,19 @@ Edit `src/data/episode-overrides.json` keyed by RSS episode id:
     "tags": ["暗恋", "单相思", "放不下"],
     "featured": true,
     "hook": "optional custom summary",
-    "transcript": "optional full text"
+    "transcript": "optional full text",
+    "setup": "optional 2–4 sentence story setup",
+    "concept": "沉没成本",
+    "takeaways": ["要点一", "要点二", "要点三"],
+    "reflection": "想一想的问题？"
   }
 }
 ```
 
 - `slug` aliases redirect to the canonical numeric URL (see `astro.config.mjs` redirects).
 - Without override tags, keywords in `src/data/episode-tags.ts` auto-tag episodes.
+- Show notes are built for **every** episode (`src/lib/show-notes.ts`): feed setup + concept detection + reflection by tag; override fields polish individual eps.
+- Share UI: copy episode link, copy full notes text, share show, submit.
 
 ### Start Here pack
 

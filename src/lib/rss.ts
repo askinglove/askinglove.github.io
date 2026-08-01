@@ -56,6 +56,11 @@ export type EpisodeOverride = {
   hook?: string;
   transcript?: string;
   title?: string;
+  /** Structured show notes overrides (see lib/show-notes.ts). */
+  setup?: string;
+  takeaways?: string[];
+  concept?: string;
+  reflection?: string;
 };
 
 type OverridesMap = Record<string, EpisodeOverride>;
