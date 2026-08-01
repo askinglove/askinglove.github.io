@@ -11,6 +11,11 @@ export const platforms: Platform[] = [
     icon: 'spotify',
   },
   {
+    name: 'Apple Podcasts',
+    url: 'https://podcasts.apple.com/podcast/id1886972295',
+    icon: 'apple',
+  },
+  {
     name: 'YouTube',
     url: 'https://www.youtube.com/@askinglovepod',
     icon: 'youtube',
