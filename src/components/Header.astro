@@ -4,222 +4,96 @@ import { navLinks, navCta, isNavActive } from '../data/navigation';
 const currentPath = Astro.url.pathname;
 ---
 
-<header class="nav">
-  <div class="wrap nav-inner">
-    <!-- Brand -->
-    <a href="/" class="brand">
-      <div class="mark">🎧</div>
-      <div>问情播客 <span class="brand-en">AskingLove</span></div>
+<header class="site-header" id="site-header">
+  <div class="wrap site-header-inner">
+    <a href="/" class="site-brand">
+      <span class="site-mark" aria-hidden="true">🎧</span>
+      <span class="site-brand-text">
+        问情播客 <span class="site-brand-en">AskingLove</span>
+      </span>
     </a>
 
-    <!-- Desktop Nav -->
-    <nav class="nav-links" aria-label="主导航">
+    <nav class="site-nav" aria-label="主导航">
       {navLinks.map((link) => (
         <a
           href={link.href}
-          class:list={[{ active: isNavActive(link.href, currentPath) }]}
+          class:list={['site-nav-link', { 'is-active': isNavActive(link.href, currentPath) }]}
           aria-current={isNavActive(link.href, currentPath) ? 'page' : undefined}
         >
           {link.label}
         </a>
       ))}
-      <a href={navCta.href} class="btn btn-primary nav-cta">{navCta.label}</a>
     </nav>
 
-    <!-- Mobile Menu Button -->
-    <button id="mobile-menu-btn" class="mobile-btn" aria-label="打开菜单" aria-expanded="false">
-      <span id="bar1"></span>
-      <span id="bar2"></span>
-      <span id="bar3"></span>
-    </button>
+    <div class="site-header-actions">
+      <a href={navCta.href} class="btn btn-primary site-header-cta">{navCta.label}</a>
+      <button
+        type="button"
+        id="mobile-menu-btn"
+        class="site-menu-btn"
+        aria-label="打开菜单"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <span class="site-menu-bar" id="bar1"></span>
+        <span class="site-menu-bar" id="bar2"></span>
+        <span class="site-menu-bar" id="bar3"></span>
+      </button>
+    </div>
   </div>
 
-  <!-- Mobile Menu -->
-  <div id="mobile-menu" class="mobile-menu hidden">
-    <div class="mobile-menu-inner">
+  <div id="mobile-menu" class="site-mobile-menu" hidden>
+    <nav class="site-mobile-menu-inner" aria-label="移动导航">
       {navLinks.map((link) => (
         <a
           href={link.href}
-          class:list={['mobile-link', { active: isNavActive(link.href, currentPath) }]}
+          class:list={['site-mobile-link', { 'is-active': isNavActive(link.href, currentPath) }]}
           aria-current={isNavActive(link.href, currentPath) ? 'page' : undefined}
         >
           {link.label}
         </a>
       ))}
-      <a href={navCta.href} class="btn btn-primary mobile-cta">{navCta.label}</a>
-    </div>
+      <a href={navCta.href} class="btn btn-primary site-mobile-cta">{navCta.label}</a>
+    </nav>
   </div>
 </header>
 
-<style>
-  .nav {
-    backdrop-filter: blur(16px);
-    background: rgba(13, 9, 19, 0.92);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 20;
-  }
-  .nav-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 28px;
-    gap: 24px;
-  }
-  .brand-en {
-    display: inline;
-  }
-  @media (max-width: 1100px) {
-    .brand-en { display: none; }
-  }
-  .brand {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    font-weight: 700;
-    color: inherit;
-    text-decoration: none;
-    font-size: 15px;
-    flex-shrink: 0;
-  }
-  .mark {
-    width: 38px;
-    height: 38px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #8d51bb, #a56bd7);
-    display: grid;
-    place-items: center;
-    box-shadow: 0 0 28px rgba(141, 81, 187, 0.26);
-    font-size: 18px;
-  }
-  .nav-links {
-    display: flex;
-    gap: 18px;
-    align-items: center;
-    color: #cec2d9;
-    font-size: 14px;
-  }
-  .nav-links a:not(.btn) {
-    color: inherit;
-    text-decoration: none;
-    transition: color 0.2s;
-    padding: 6px 2px;
-  }
-  .nav-links a:not(.btn):hover,
-  .nav-links a:not(.btn).active {
-    color: white;
-  }
-  .nav-links a:not(.btn).active {
-    font-weight: 600;
-  }
-  .nav-cta {
-    padding: 10px 16px !important;
-    font-size: 13px !important;
-    border-radius: 12px !important;
-    margin-left: 4px;
-  }
-
-  /* Mobile button */
-  .mobile-btn {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    padding: 8px;
-    min-width: 44px;
-    min-height: 44px;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-  .mobile-btn span {
-    display: block;
-    width: 20px;
-    height: 2px;
-    background: #cec2d9;
-    transition: all 0.3s ease;
-    transform-origin: center;
-  }
-
-  /* Mobile menu */
-  .mobile-menu {
-    position: fixed;
-    inset: 0;
-    top: 71px;
-    background: rgba(13, 9, 19, 0.95);
-    backdrop-filter: blur(20px);
-    z-index: 19;
-  }
-  .mobile-menu.hidden { display: none; }
-  .mobile-menu-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 28px;
-    padding: 48px 24px;
-  }
-  .mobile-link {
-    color: #f6f1fb;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: 500;
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
-  }
-  .mobile-link.active {
-    color: #c79be6;
-  }
-  .mobile-cta { margin-top: 8px; }
-
-  @media (max-width: 980px) {
-    .nav-links { display: none; }
-    .mobile-btn { display: flex; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .nav-links a,
-    .mobile-btn span {
-      transition: none;
-    }
-  }
-</style>
-
 <script>
-  const btn = document.getElementById('mobile-menu-btn')!;
-  const menu = document.getElementById('mobile-menu')!;
-  const bar1 = document.getElementById('bar1')!;
-  const bar2 = document.getElementById('bar2')!;
-  const bar3 = document.getElementById('bar3')!;
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const bar1 = document.getElementById('bar1');
+  const bar2 = document.getElementById('bar2');
+  const bar3 = document.getElementById('bar3');
 
-  let open = false;
+  if (btn && menu && bar1 && bar2 && bar3) {
+    let open = false;
 
-  btn.addEventListener('click', () => {
-    open = !open;
-    menu.classList.toggle('hidden', !open);
-    btn.setAttribute('aria-expanded', String(open));
+    const setOpen = (next) => {
+      open = next;
+      menu.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+      document.body.classList.toggle('site-menu-open', open);
 
-    if (open) {
-      bar1.style.transform = 'rotate(45deg) translate(2.5px, 2.5px)';
-      bar2.style.opacity = '0';
-      bar3.style.transform = 'rotate(-45deg) translate(2.5px, -2.5px)';
-    } else {
-      bar1.style.transform = '';
-      bar2.style.opacity = '';
-      bar3.style.transform = '';
-    }
-  });
+      if (open) {
+        bar1.style.transform = 'rotate(45deg) translate(2.5px, 2.5px)';
+        bar2.style.opacity = '0';
+        bar3.style.transform = 'rotate(-45deg) translate(2.5px, -2.5px)';
+      } else {
+        bar1.style.transform = '';
+        bar2.style.opacity = '';
+        bar3.style.transform = '';
+      }
+    };
 
-  menu.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      open = false;
-      menu.classList.add('hidden');
-      btn.setAttribute('aria-expanded', 'false');
-      bar1.style.transform = '';
-      bar2.style.opacity = '';
-      bar3.style.transform = '';
+    btn.addEventListener('click', () => setOpen(!open));
+
+    menu.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => setOpen(false));
     });
-  });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && open) setOpen(false);
+    });
+  }
 </script>

@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="页面未找到"
+  description="你访问的页面不存在。回到问情播客首页继续收听。"
+>
+  <div class="wrap" style="padding-top:140px; padding-bottom:80px; text-align:center;">
+    <h1 style="margin:0 auto 16px; font-size:clamp(38px,5.8vw,58px); line-height:1.06; letter-spacing:-0.05em; font-weight:700;">
+      页面未找到
+    </h1>
+    <p style="color:#cec2d9; font-size:clamp(16px,2vw,18px); line-height:1.85; margin:0 auto 36px; max-width:28ch;">
+      链接可能已失效，或者页面还在路上。
+    </p>
+    <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+      <a class="btn btn-primary" href="/">返回首页</a>
+      <a class="btn btn-secondary" href="/episodes">全部节目</a>
+      <a class="btn btn-secondary" href="/listen">收听</a>
+    </div>
+  </div>
+
+  <div class="light" style="padding-top:48px;">
+    <div class="wrap">
+      <Footer />
+    </div>
+  </div>
+</BaseLayout>
