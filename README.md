@@ -28,6 +28,18 @@ On every `npm run build`, `src/lib/rss.ts` fetches and parses the feed, merges `
 
 No separate commit of generated episode files is required — CI/build regenerates the catalog.
 
+### Auto-update when you publish on RSS.com
+
+The site is static, so it cannot “live poll” the feed in the visitor’s browser for new episodes. Instead GitHub Actions acts as an **RSS reader**:
+
+1. **Every 2 hours** (and on every push to `main`) CI fingerprints the public feed (`scripts/feed-fingerprint.mjs`).
+2. If episode ids / titles / pubDates / enclosures **changed**, it rebuilds and deploys.
+3. If nothing changed on a scheduled run, it **skips** the build (saves Actions minutes).
+
+You can also run **Actions → Deploy to GitHub Pages → Run workflow** anytime after publishing.
+
+**Not auto-generated from RSS:** 正文 (`transcripts/`), captions (`captions/`), Spotify deep-link map (run `sync:store-links` when you want). Those still need a commit (or a future workflow step).
+
 ### Overrides
 
 Edit `src/data/episode-overrides.json` keyed by RSS episode id:

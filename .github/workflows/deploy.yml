@@ -1,50 +1,107 @@
-name: Deploy to GitHub Pages                                                             
-                                                                                           
-on:                                                                                      
-    push:                                                         
-      branches: [main]
-    workflow_dispatch:
+name: Deploy to GitHub Pages
 
-permissions:                                                                           
-    contents: read                                                                         
-    pages: write                  
-    id-token: write                                                                        
-                                                                  
+on:
+  push:
+    branches: [main]
+  # Rebuild when RSS.com gets a new episode (no git push needed)
+  schedule:
+    # Every 2 hours — GitHub cron can drift ~15 min
+    - cron: '20 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 concurrency:
-    group: pages
-    cancel-in-progress: false
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-    build:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-                                                                                         
-        - name: Setup Node                                                                 
-          uses: actions/setup-node@v4
-          with:                                                                            
-            node-version: 22                                      
-            cache: npm
+  # On schedule only: skip deploy if the public feed is unchanged.
+  check-feed:
+    runs-on: ubuntu-latest
+    outputs:
+      should_deploy: ${{ steps.decide.outputs.should_deploy }}
+      feed_hash: ${{ steps.fp.outputs.hash }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-        - name: Install dependencies
-          run: npm ci
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-        - name: Build Astro site
-          run: npx astro build                                                           
-                                                                                           
-        - name: Upload artifact   
-          uses: actions/upload-pages-artifact@v3                                           
-          with:                                                   
-            path: ./dist
+      - name: Fingerprint RSS feed
+        id: fp
+        run: |
+          HASH=$(node scripts/feed-fingerprint.mjs)
+          echo "hash=$HASH" >> "$GITHUB_OUTPUT"
+          echo "Feed fingerprint: $HASH"
 
-    deploy:
-      needs: build
-      runs-on: ubuntu-latest
-      environment:
-        name: github-pages                                                               
-        url: ${{ steps.deployment.outputs.page_url }}                                      
-      steps:                      
-        - name: Deploy to GitHub Pages                                                     
-          id: deployment                                          
-          uses: actions/deploy-pages@v4
+      - name: Cache sentinel for this feed revision
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: .feed-sentinel
+          key: rss-feed-${{ steps.fp.outputs.hash }}
+
+      - name: Decide whether to deploy
+        id: decide
+        run: |
+          EVENT="${{ github.event_name }}"
+          HIT="${{ steps.cache.outputs.cache-hit }}"
+          if [ "$EVENT" = "schedule" ] && [ "$HIT" = "true" ]; then
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+            echo "RSS feed unchanged since last scheduled deploy — skipping."
+          else
+            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+            echo "ok ${{ steps.fp.outputs.hash }}" > .feed-sentinel
+            if [ "$EVENT" = "schedule" ]; then
+              echo "RSS feed changed (or first run) — deploying."
+            else
+              echo "Deploy triggered by $EVENT."
+            fi
+          fi
+
+  build:
+    needs: check-feed
+    if: needs.check-feed.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Astro site (fetches live RSS)
+        run: npx astro build
+        env:
+          # Optional: wire GA later via repo secrets
+          PUBLIC_GA_ID: ${{ secrets.PUBLIC_GA_ID }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: [check-feed, build]
+    if: needs.check-feed.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
