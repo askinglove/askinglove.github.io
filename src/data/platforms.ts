@@ -11,6 +11,11 @@ export const platforms: Platform[] = [
     icon: 'spotify',
   },
   {
+    name: 'YouTube',
+    url: 'https://www.youtube.com/@askinglovepod',
+    icon: 'youtube',
+  },
+  {
     name: 'RSS.com',
     url: 'https://rss.com/podcasts/askinglove/',
     icon: 'rss',
@@ -27,5 +32,10 @@ export const socialLinks = [
     name: 'Threads',
     url: 'https://www.threads.com/@askinglovepod',
     icon: 'threads',
+  },
+  {
+    name: 'YouTube',
+    url: 'https://www.youtube.com/@askinglovepod',
+    icon: 'youtube',
   },
 ];

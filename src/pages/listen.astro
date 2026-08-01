@@ -45,7 +45,7 @@ import { platforms } from '../data/platforms';
         <div style="display:grid; gap:14px;">
           {platforms.map((p) => (
             <a href={p.url} target="_blank" rel="noopener noreferrer" class="platform-card">
-              <strong>{p.name === 'Spotify' ? '在 Spotify 收听' : '在 RSS.com 收听'}</strong>
+              <strong>在 {p.name} 收听</strong>
               <span class="platform-arrow">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
