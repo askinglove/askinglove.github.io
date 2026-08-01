@@ -19,67 +19,64 @@ import Footer from '../components/Footer.astro';
 
   <!-- Light section -->
   <div class="light" style="padding-top:64px;">
-    <div class="wrap" style="max-width:680px;">
+    <div class="wrap about-content">
 
       <!-- What -->
-      <section style="padding-bottom:64px;">
-        <h2 style="font-size:clamp(26px,3.5vw,34px); letter-spacing:-0.03em; margin:0 0 16px; color:#2c2433; text-align:center;">问情播客是什么？</h2>
-        <div style="color:#6d6376; font-size:16px; line-height:1.88; text-align:center;">
-          <p style="margin:0 0 20px;">你有没有过这样的深夜——翻来覆去睡不着，脑子里全是那个人，也想不通自己为什么这么在意？</p>
-          <p style="margin:0;">问情播客想做的，不是给你标准答案。我们不说教，不评判，也不想做那个告诉你"你应该怎样"的人。只想像一个会认真听你说话的朋友，陪你把乱成一团的情绪理清一点。</p>
+      <section class="about-section">
+        <h2 class="about-heading">问情播客是什么？</h2>
+        <div class="about-prose">
+          <p>你有没有过这样的深夜——翻来覆去睡不着，脑子里全是那个人，也想不通自己为什么这么在意？</p>
+          <p>问情播客想做的，不是给你标准答案。我们不说教，不评判，也不想做那个告诉你“你应该怎样”的人。只想像一个会认真听你说话的朋友，陪你把乱成一团的情绪理清一点。</p>
         </div>
       </section>
 
       <!-- Why -->
-      <section style="padding-bottom:64px;">
-        <h2 style="font-size:clamp(26px,3.5vw,34px); letter-spacing:-0.03em; margin:0 0 16px; color:#2c2433; text-align:center;">为什么做这档播客？</h2>
-        <div style="color:#6d6376; font-size:16px; line-height:1.88; text-align:center;">
-          <p style="margin:0 0 20px;">在亲密关系里，我们常常不知道该跟谁说。跟朋友聊怕被评判，跟家人说怕被念叨，跟对方说又怕把关系弄得更复杂。</p>
-          <p style="margin:0;">问情播客想做的，是成为那个可以安全说出口的地方。你不需要被评价，也不需要装作已经想通了。你只需要把故事慢慢讲出来。</p>
+      <section class="about-section">
+        <h2 class="about-heading">为什么做这档播客？</h2>
+        <div class="about-prose">
+          <p>在亲密关系里，我们常常不知道该跟谁说。跟朋友聊怕被评判，跟家人说怕被念叨，跟对方说又怕把关系弄得更复杂。</p>
+          <p>问情播客想做的，是成为那个可以安全说出口的地方。你不需要被评价，也不需要装作已经想通了。你只需要把故事慢慢讲出来。</p>
         </div>
       </section>
 
       <!-- Topics -->
-      <section style="padding-bottom:64px;">
-        <h2 style="font-size:clamp(26px,3.5vw,34px); letter-spacing:-0.03em; margin:0 0 20px; color:#2c2433; text-align:center;">我们聊什么？</h2>
-        <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; max-width:500px; margin:0 auto;">
+      <section class="about-section">
+        <h2 class="about-heading">我们聊什么？</h2>
+        <div class="about-topics">
           {['暗恋与心动', '分手与放下', '信任与背叛', '沟通与误解', '异地与等待', '婚姻与承诺', '自我价值', '家庭期待', '那些说不出口的'].map((topic) => (
-            <span style="padding:8px 16px; border-radius:999px; background:rgba(141,81,187,0.06); color:#8d6ba3; font-size:14px;">{topic}</span>
+            <span class="about-topic">{topic}</span>
           ))}
         </div>
       </section>
 
       <!-- 主理人 -->
-      <section style="padding-bottom:64px;">
-        <h2 style="font-size:clamp(26px,3.5vw,34px); letter-spacing:-0.03em; margin:0 0 16px; color:#2c2433; text-align:center;">主理人</h2>
-        <div style="color:#6d6376; font-size:16px; line-height:1.88; text-align:center;">
-          <p style="margin:0 0 20px;">我是小问，问情播客的主理人。</p>
-          <p style="margin:0;">我负责选题、改写和内容把关。希望这里始终像一个会认真听你说话的朋友，而不是一个告诉你“应该怎样”的人。</p>
+      <section class="about-section">
+        <h2 class="about-heading">主理人</h2>
+        <div class="about-prose">
+          <p>我是小问，问情播客的主理人。</p>
+          <p>我负责选题、改写和内容把关。希望这里始终像一个会认真听你说话的朋友，而不是一个告诉你“应该怎样”的人。</p>
         </div>
       </section>
 
       <!-- 制作说明 -->
-      <section style="padding-bottom:64px;">
-        <h2 style="font-size:clamp(26px,3.5vw,34px); letter-spacing:-0.03em; margin:0 0 16px; color:#2c2433; text-align:center;">制作说明</h2>
-        <div style="color:#6d6376; font-size:16px; line-height:1.88; text-align:center;">
-          <p style="margin:0 0 20px;">每一期问情，都从一段真实的情绪出发——有的来自匿名投稿，有的来自很多人都经历过的关系困境。</p>
-          <p style="margin:0 0 20px;">制作过程中，我们会用 AI 辅助整理文稿与声音；内容会由主理人小问筛选、改写与把关。技术是工具，认真对待你的感受才是目的。</p>
-          <p style="margin:0;">
+      <section class="about-section">
+        <h2 class="about-heading">制作说明</h2>
+        <div class="about-prose">
+          <p>每一期问情，都从一段真实的情绪出发——有的来自匿名投稿，有的来自很多人都经历过的关系困境。</p>
+          <p>制作过程中，我们会用 AI 辅助整理文稿与声音；内容会由主理人小问筛选、改写与把关。技术是工具，认真对待你的感受才是目的。</p>
+          <p>
             如果你也有不知道该跟谁说的话，欢迎匿名投稿。
-            <br />
             <a href="/submit" class="inline-link">https://askinglove.com/submit/</a>
           </p>
         </div>
       </section>
 
       <!-- Belief -->
-      <section style="padding-bottom:64px;">
-        <div style="text-align:center; padding:56px 28px; border-radius:28px; background:radial-gradient(circle at 50% 10%, rgba(141,81,187,0.18), transparent 30%), linear-gradient(180deg,#171123,#110b18); color:white; box-shadow:0 18px 44px rgba(0,0,0,0.18);">
-          <div style="max-width:24ch; margin:0 auto; font-size:clamp(22px,2.6vw,30px); line-height:1.32; letter-spacing:-0.03em;">
-            爱是需要学习的能力，<br>
-            而你愿意来到这里，<br>
-            就已经迈出了最重要的一步。
-          </div>
+      <section class="about-section">
+        <div class="about-belief">
+          <p class="about-belief-text">
+            爱是需要学习的能力，而你愿意来到这里，就已经迈出了最重要的一步。
+          </p>
         </div>
       </section>
 
@@ -111,16 +108,93 @@ import Footer from '../components/Footer.astro';
 </BaseLayout>
 
 <style>
+  .about-content {
+    max-width: 640px;
+  }
+
+  .about-section {
+    padding-bottom: 64px;
+  }
+
+  .about-heading {
+    font-size: clamp(26px, 3.5vw, 34px);
+    letter-spacing: -0.03em;
+    margin: 0 0 20px;
+    color: #2c2433;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  /* Left-aligned body copy reads more evenly than centered prose,
+     and avoids short orphan lines of only a few characters. */
+  .about-prose {
+    color: #6d6376;
+    font-size: 16px;
+    line-height: 1.95;
+    text-align: left;
+    text-wrap: pretty;
+  }
+
+  .about-prose p {
+    margin: 0 0 1.15em;
+  }
+
+  .about-prose p:last-child {
+    margin-bottom: 0;
+  }
+
+  .about-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .about-topic {
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: rgba(141, 81, 187, 0.06);
+    color: #8d6ba3;
+    font-size: 14px;
+  }
+
+  .about-belief {
+    text-align: center;
+    padding: 48px 32px;
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at 50% 10%, rgba(141, 81, 187, 0.18), transparent 30%),
+      linear-gradient(180deg, #171123, #110b18);
+    color: white;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
+  }
+
+  .about-belief-text {
+    margin: 0 auto;
+    max-width: 18em;
+    font-size: clamp(20px, 2.4vw, 26px);
+    line-height: 1.55;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
   .inline-link {
+    display: inline;
     color: #8d51bb;
     text-decoration: none;
     word-break: break-all;
     transition: color 0.15s ease;
   }
+
   .inline-link:hover {
     color: #6f3d9a;
     text-decoration: underline;
   }
+
+  .about-prose .inline-link {
+    margin-left: 0.35em;
+  }
+
   .newsletter-card {
     text-align: center;
     padding: 32px 32px;
@@ -129,6 +203,7 @@ import Footer from '../components/Footer.astro';
     border-radius: 20px;
     box-shadow: 0 2px 10px rgba(18, 12, 28, 0.025);
   }
+
   .newsletter-title {
     font-size: 21px;
     font-weight: 700;
@@ -136,12 +211,14 @@ import Footer from '../components/Footer.astro';
     color: #2c2433;
     margin: 0 0 12px;
   }
+
   .newsletter-copy {
     font-size: 15px;
     color: #9688a3;
     line-height: 1.8;
     margin: 0 0 24px;
   }
+
   .newsletter-cta {
     display: inline-flex;
     align-items: center;
@@ -156,6 +233,7 @@ import Footer from '../components/Footer.astro';
     box-shadow: 0 6px 16px rgba(141, 81, 187, 0.14);
     transition: all 0.2s ease;
   }
+
   .newsletter-cta:hover {
     box-shadow: 0 10px 22px rgba(141, 81, 187, 0.20);
     transform: translateY(-1px);
