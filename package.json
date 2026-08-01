@@ -8,7 +8,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "sync:store-links": "node scripts/sync-store-links.mjs"
+    "sync:store-links": "node scripts/sync-store-links.mjs",
+    "transcript:new": "node scripts/new-transcript.mjs",
+    "transcript:srt": "node scripts/export-youtube-captions.mjs",
+    "transcript:youtube": "node scripts/export-youtube-description.mjs"
   },
   "dependencies": {
     "@astrojs/preact": "^4.0.0",

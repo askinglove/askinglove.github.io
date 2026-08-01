@@ -1,0 +1,222 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Footer from '../../../components/Footer.astro';
+import { show } from '../../../data/show';
+import type { Episode } from '../../../lib/rss';
+import { getPublishedEpisodes } from '../../../lib/rss';
+import {
+  episodeHref,
+  formatEpisodeDate,
+  rehydrateEpisode,
+} from '../../../lib/episodes';
+import {
+  hasTranscriptFile,
+  loadTranscript,
+  transcriptHref,
+} from '../../../lib/transcripts';
+
+export async function getStaticPaths() {
+  const all = await getPublishedEpisodes();
+  return all
+    .filter((ep) => hasTranscriptFile(ep.rssId))
+    .map((episode) => ({
+      params: { slug: episode.slug },
+      props: { episode },
+    }));
+}
+
+interface Props {
+  episode: Episode;
+}
+
+const episode = rehydrateEpisode(Astro.props.episode);
+const doc = loadTranscript(episode.rssId);
+
+if (!doc) {
+  throw new Error(`Missing transcript for ${episode.rssId}`);
+}
+
+const epUrl = new URL(episodeHref(episode), show.url).href;
+const canonicalUrl = new URL(transcriptHref(episode), show.url).href;
+const formattedDate = formatEpisodeDate(episode.pubDate);
+
+const metaParts: string[] = [];
+if (episode.episodeNumber != null) metaParts.push(`第 ${episode.episodeNumber} 集`);
+if (formattedDate) metaParts.push(formattedDate);
+if (episode.duration) metaParts.push(episode.duration);
+metaParts.push(`约 ${doc.charCount} 字`);
+---
+
+<BaseLayout
+  title={`${episode.title} · 阅读全文`}
+  description={episode.summary || episode.hook}
+  ogType="article"
+  ogImage={episode.coverImage}
+  canonicalUrl={canonicalUrl}
+>
+  <div class="wrap" style="padding-top:110px; padding-bottom:48px; text-align:center;">
+    <div class="tx-kicker">正文 · 阅读版</div>
+    <h1 style="margin:0 auto 14px; max-width:16ch; font-size:clamp(32px,5vw,48px); line-height:1.12; letter-spacing:-0.04em; font-weight:700;">
+      {episode.title}
+    </h1>
+    {metaParts.length > 0 && (
+      <div style="color:#a89ab5; font-size:13px; letter-spacing:0.04em;">
+        {metaParts.join(' · ')}
+      </div>
+    )}
+    <div style="margin-top:22px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <a class="btn btn-primary" href={episodeHref(episode)} style="padding:12px 20px; font-size:14px;">
+        收听本集
+      </a>
+      <a class="btn btn-secondary" href="/episodes" style="padding:12px 20px; font-size:14px;">
+        全部节目
+      </a>
+    </div>
+  </div>
+
+  <div class="light" style="padding-top:48px;">
+    <div class="wrap" style="max-width:680px;">
+      <p class="tx-disclaimer">{doc.disclaimer}</p>
+
+      <article class="tx-body" set:html={doc.html} />
+
+      <section class="tx-cta">
+        <h2>听完 / 读完之后</h2>
+        <div class="tx-cta-actions">
+          <a class="btn btn-primary" href={episodeHref(episode)}>收听本集音频</a>
+          <a class="btn btn-light" href="/submit">投稿你的故事</a>
+          <a
+            class="btn btn-light"
+            href={show.substackUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            订阅更新
+          </a>
+        </div>
+        <p class="tx-share-url">
+          分享本文：
+          <a href={canonicalUrl}>{canonicalUrl}</a>
+        </p>
+        <p class="tx-share-url">
+          节目页：
+          <a href={epUrl}>{epUrl}</a>
+        </p>
+      </section>
+    </div>
+
+    <div style="padding-top:24px;">
+      <Footer />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .tx-kicker {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #cec2d9;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    margin-bottom: 20px;
+  }
+  .tx-disclaimer {
+    margin: 0 0 28px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: rgba(141, 81, 187, 0.06);
+    border: 1px solid rgba(141, 81, 187, 0.1);
+    color: #6d6376;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .tx-body {
+    color: #2c2433;
+    font-size: 17px;
+    line-height: 1.95;
+  }
+  .tx-body :global(h2) {
+    margin: 2em 0 0.75em;
+    font-size: clamp(22px, 3vw, 28px);
+    letter-spacing: -0.03em;
+    line-height: 1.3;
+    color: #2c2433;
+  }
+  .tx-body :global(h2:first-child) {
+    margin-top: 0;
+  }
+  .tx-body :global(h3) {
+    margin: 1.6em 0 0.6em;
+    font-size: 18px;
+    color: #2c2433;
+  }
+  .tx-body :global(p) {
+    margin: 0 0 1.15em;
+    color: #3d3448;
+  }
+  .tx-body :global(ul) {
+    margin: 0 0 1.15em;
+    padding-left: 1.25em;
+    color: #3d3448;
+  }
+  .tx-body :global(li) {
+    margin-bottom: 0.4em;
+  }
+  .tx-body :global(blockquote) {
+    margin: 0 0 1.15em;
+    padding: 14px 18px;
+    border-left: 3px solid #8d51bb;
+    background: rgba(141, 81, 187, 0.05);
+    border-radius: 0 12px 12px 0;
+  }
+  .tx-body :global(blockquote p) {
+    margin: 0;
+    color: #2c2433;
+  }
+  .tx-body :global(hr) {
+    border: none;
+    border-top: 1px solid rgba(44, 36, 51, 0.1);
+    margin: 2em 0;
+  }
+  .tx-body :global(a) {
+    color: #8d51bb;
+  }
+  .tx-cta {
+    margin: 48px 0 64px;
+    padding: 32px 28px;
+    text-align: center;
+    background: white;
+    border: 1px solid rgba(44, 36, 51, 0.07);
+    border-radius: 22px;
+    box-shadow: 0 4px 14px rgba(18, 12, 28, 0.04);
+  }
+  .tx-cta h2 {
+    margin: 0 0 18px;
+    font-size: 22px;
+    color: #2c2433;
+  }
+  .tx-cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .tx-share-url {
+    margin: 8px 0 0;
+    font-size: 13px;
+    color: #9688a3;
+    word-break: break-all;
+    line-height: 1.6;
+  }
+  .tx-share-url a {
+    color: #8d51bb;
+    text-decoration: none;
+  }
+  .tx-share-url a:hover {
+    text-decoration: underline;
+  }
+</style>

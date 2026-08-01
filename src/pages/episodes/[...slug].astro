@@ -21,6 +21,11 @@ import {
 import { podcastEpisodeJsonLd } from '../../lib/jsonld';
 import { buildShowNotes } from '../../lib/show-notes';
 import { getEpisodePlatformLinks } from '../../lib/store-links';
+import {
+  buildYoutubeDescription,
+  hasFullTranscript,
+  transcriptHref,
+} from '../../lib/transcripts';
 
 export async function getStaticPaths() {
   return getEpisodeStaticPaths();
@@ -53,6 +58,14 @@ if (episode.duration) metaParts.push(episode.duration);
 const platformLinks = getEpisodePlatformLinks({
   rssId: episode.rssId,
   rssPageUrl: episode.rssPageUrl,
+});
+
+const canReadFull = hasFullTranscript(episode.rssId);
+const fullTextHref = transcriptHref(episode);
+const youtubeDescription = buildYoutubeDescription({
+  episode,
+  takeaways: showNotes.takeaways,
+  useTranscriptUrl: true,
 });
 
 const sorted = all.slice().sort((a, b) => a.pubDate.getTime() - b.pubDate.getTime());
@@ -113,6 +126,31 @@ const nextEp = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : undefined
         </section>
       )}
 
+      <!-- 阅读全文 / YouTube ops links -->
+      <section style="padding-bottom:28px;">
+        <div class="read-full-card">
+          {canReadFull ? (
+            <>
+              <div>
+                <strong>阅读全文</strong>
+                <p>完整正文（阅读版），适合慢慢看，也可作为 YouTube 字幕底稿。</p>
+              </div>
+              <a class="btn btn-primary" href={fullTextHref} style="padding:14px 22px; font-size:15px; white-space:nowrap;">
+                阅读全文
+              </a>
+            </>
+          ) : (
+            <>
+              <div>
+                <strong>正文文稿</strong>
+                <p>完整阅读版整理中。定稿后会出现在本页，并可同步到 YouTube 字幕。</p>
+              </div>
+              <span class="read-full-soon">即将上线</span>
+            </>
+          )}
+        </div>
+      </section>
+
       <!-- Structured show notes -->
       <section style="padding-bottom:36px;">
         <ShowNotesBlock notes={showNotes} related={related} />
@@ -131,17 +169,18 @@ const nextEp = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : undefined
         />
       </section>
 
-      <!-- Full transcript if manually provided -->
-      {episode.transcript && (
-        <section style="padding-bottom:48px;">
-          <h2 style="font-size:clamp(22px,3vw,28px); letter-spacing:-0.03em; margin:0 0 18px; color:#2c2433; font-weight:700;">
-            文稿
-          </h2>
-          <div class="notes-body">
-            {episode.transcript.split(/\n\n+/).map((para) => (
-              <p>{para}</p>
-            ))}
-          </div>
+      <!-- YouTube description helper (for ops / share) -->
+      {canReadFull && (
+        <section style="padding-bottom:40px;">
+          <details class="yt-desc-box">
+            <summary>YouTube 描述文案（短 · 可复制）</summary>
+            <p class="yt-desc-hint">
+              描述里只放短 hook + 链接，不要贴全文。字幕请用
+              <code>npm run transcript:srt -- {episode.rssId}</code>
+              导出后上传。
+            </p>
+            <pre class="yt-desc-pre">{youtubeDescription}</pre>
+          </details>
         </section>
       )}
 
@@ -275,12 +314,74 @@ const nextEp = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : undefined
     border-color: rgba(199, 155, 230, 0.45);
     background: rgba(141, 81, 187, 0.18);
   }
-  .hook-text {
-    margin: 0;
-    color: #6d6376;
+  .read-full-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 20px 22px;
+    background: white;
+    border: 1px solid rgba(44, 36, 51, 0.07);
+    border-radius: 20px;
+    box-shadow: 0 4px 14px rgba(18, 12, 28, 0.04);
+  }
+  .read-full-card strong {
+    display: block;
     font-size: 17px;
-    line-height: 1.9;
-    text-align: left;
+    color: #2c2433;
+    margin-bottom: 6px;
+  }
+  .read-full-card p {
+    margin: 0;
+    font-size: 14px;
+    color: #6d6376;
+    line-height: 1.65;
+    max-width: 36ch;
+  }
+  .read-full-soon {
+    font-size: 13px;
+    font-weight: 600;
+    color: #9688a3;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(141, 81, 187, 0.06);
+  }
+  .yt-desc-box {
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: #f7f0fb;
+    border: 1px solid rgba(141, 81, 187, 0.12);
+    color: #2c2433;
+  }
+  .yt-desc-box summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .yt-desc-hint {
+    margin: 12px 0;
+    font-size: 13px;
+    color: #6d6376;
+    line-height: 1.65;
+  }
+  .yt-desc-hint code {
+    font-size: 12px;
+    background: rgba(141, 81, 187, 0.08);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  .yt-desc-pre {
+    margin: 0;
+    padding: 14px;
+    border-radius: 12px;
+    background: white;
+    border: 1px solid rgba(44, 36, 51, 0.08);
+    font-size: 13px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #3d3448;
   }
   .notes-body p {
     margin: 0 0 1.1em;

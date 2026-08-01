@@ -4,6 +4,9 @@ node_modules/
 # Build output
 dist/
 
+# Generated YouTube caption exports (regenerate with npm run transcript:srt)
+exports/
+
 # Astro
 .astro/
 

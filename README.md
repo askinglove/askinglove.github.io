@@ -62,6 +62,28 @@ Curated homepage pack: `src/data/start-here.ts` (list of RSS ids).
 
 `src/data/show.ts` — name, host (小问), feed, cover, Substack.
 
+## 正文 / YouTube（one source of truth）
+
+Full reading text (~1,200+ 字) lives in:
+
+`src/data/transcripts/{rssId}.md`
+
+| Surface | URL / output |
+|---|---|
+| Episode page | `/episodes/{id}/` → **阅读全文** |
+| 正文 page | `/episodes/{id}/transcript/` |
+| YT description | short + link (`npm run transcript:youtube -- {id}`) |
+| YT captions | `.srt` / `.vtt` (`npm run transcript:srt -- {id}`) |
+
+```bash
+npm run transcript:new -- 2664929   # scaffold
+# edit the .md to 1200+ 字简体
+npm run transcript:srt -- 2664929   # exports/youtube/2664929.srt
+npm run transcript:youtube -- 2664929
+```
+
+Do **not** paste the full 正文 into the YouTube description box.
+
 ## Platforms / social
 
 `src/data/platforms.ts` — Spotify, Apple Podcasts, YouTube, RSS.com + Instagram/Threads/YouTube footer links.
