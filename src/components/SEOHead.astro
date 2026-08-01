@@ -43,9 +43,13 @@ const gaEnabled = import.meta.env.PROD && !!gaId && /^G-[A-Z0-9]+$/i.test(gaId);
 <!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-<!-- Preconnect to Google Fonts for Noto Sans SC fallback -->
+<!-- Chinese-first type: Noto Serif SC (headings) + Noto Sans SC (body) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;600;700&display=swap"
+  rel="stylesheet"
+/>
 
 {gaEnabled && (
   <>

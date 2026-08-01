@@ -123,15 +123,17 @@ export default function ShareBar({
         }
         .share-title {
           margin: 0 0 8px;
-          font-size: clamp(22px, 3vw, 28px);
-          letter-spacing: -0.03em;
+          font-family: var(--font-serif);
+          font-size: var(--text-3xl);
+          letter-spacing: 0.02em;
           color: #2c2433;
-          font-weight: 700;
+          font-weight: 600;
         }
         .share-lead {
           margin: 0 0 22px;
           color: #6d6376;
-          font-size: 15px;
+          font-family: var(--font-sans);
+          font-size: var(--text-base);
           line-height: 1.75;
         }
         .share-block + .share-block {

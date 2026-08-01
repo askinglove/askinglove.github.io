@@ -9,10 +9,10 @@ import Footer from '../components/Footer.astro';
 >
   <!-- Hero -->
   <div class="wrap" style="padding-top:110px; padding-bottom:56px; text-align:center;">
-    <h1 style="margin:0 auto 20px; font-size:clamp(38px,5.8vw,58px); line-height:1.06; letter-spacing:-0.05em; font-weight:700;">
+    <h1 style="margin:0 auto 20px; font-size:var(--text-5xl); line-height:1.06; letter-spacing:0.02em; font-weight:700;">
       关于问情播客
     </h1>
-    <div style="color:#cec2d9; font-size:clamp(17px,2vw,19px); line-height:1.85;">
+    <div style="color:#cec2d9; font-size:var(--text-md); line-height:1.85;">
       一档关于爱情、关系与情绪的中文播客。
     </div>
   </div>
@@ -117,8 +117,10 @@ import Footer from '../components/Footer.astro';
   }
 
   .about-heading {
-    font-size: clamp(26px, 3.5vw, 34px);
-    letter-spacing: -0.03em;
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: 600;
+    letter-spacing: 0.02em;
     margin: 0 0 20px;
     color: #2c2433;
     text-align: center;
@@ -129,8 +131,9 @@ import Footer from '../components/Footer.astro';
      and avoids short orphan lines of only a few characters. */
   .about-prose {
     color: #6d6376;
-    font-size: 16px;
-    line-height: 1.95;
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
     text-align: left;
     text-wrap: pretty;
   }
@@ -172,9 +175,11 @@ import Footer from '../components/Footer.astro';
   .about-belief-text {
     margin: 0 auto;
     max-width: 18em;
-    font-size: clamp(20px, 2.4vw, 26px);
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: 600;
     line-height: 1.55;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.02em;
     text-wrap: balance;
   }
 

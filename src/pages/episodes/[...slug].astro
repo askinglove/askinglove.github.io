@@ -100,7 +100,7 @@ const nextEp = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : undefined
         )}
       </div>
     )}
-    <h1 style="margin:0 auto 18px; max-width:18ch; font-size:clamp(34px,5.4vw,54px); line-height:1.08; letter-spacing:-0.05em; font-weight:700;">
+    <h1 style="margin:0 auto 18px; max-width:18ch; font-size:var(--text-4xl); line-height:1.08; letter-spacing:0.02em; font-weight:700;">
       {episode.title}
     </h1>
     {metaParts.length > 0 && (
@@ -187,7 +187,7 @@ const nextEp = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : undefined
       <!-- Related episodes (cards) -->
       {related.length > 0 && (
         <section class="related-episodes" style="padding-bottom:48px;">
-          <h2 style="font-size:clamp(22px,3vw,28px); letter-spacing:-0.03em; margin:0 0 18px; color:#2c2433; font-weight:700;">
+          <h2 style="font-size:var(--text-3xl); letter-spacing:0.02em; margin:0 0 18px; color:#2c2433; font-weight:700;">
             相关节目
           </h2>
           <div style="display:grid; gap:12px;">
@@ -244,7 +244,7 @@ const nextEp = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : undefined
       <!-- Platforms (deep links when available) -->
       <section style="padding-bottom:40px;">
         <div style="text-align:center; margin-bottom:16px;">
-          <h2 style="font-size:clamp(22px,3vw,28px); letter-spacing:-0.03em; margin:0 0 6px; color:#2c2433; font-weight:700;">在其他平台收听</h2>
+          <h2 style="font-size:var(--text-3xl); letter-spacing:0.02em; margin:0 0 6px; color:#2c2433; font-weight:700;">在其他平台收听</h2>
           <p style="color:#8a7d96; font-size:14px; margin:0;">Spotify / Apple 支持直达本集（若已匹配）。</p>
         </div>
         <div style="display:grid; gap:14px;" class="platform-grid">

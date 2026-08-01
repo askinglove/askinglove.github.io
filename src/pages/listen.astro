@@ -17,10 +17,10 @@ const latest = getLatestEpisode(all);
 >
   <!-- Hero -->
   <div class="wrap" style="padding-top:120px; padding-bottom:72px; text-align:center;">
-    <h1 style="margin:0 auto 16px; font-size:clamp(38px,5.8vw,58px); line-height:1.06; letter-spacing:-0.05em; font-weight:700;">
+    <h1 style="margin:0 auto 16px; font-size:var(--text-5xl); line-height:1.06; letter-spacing:0.02em; font-weight:700;">
       在线收听
     </h1>
-    <div style="color:#cec2d9; font-size:clamp(17px,2vw,19px); line-height:1.85;">
+    <div style="color:#cec2d9; font-size:var(--text-md); line-height:1.85;">
       把那些不知道该跟谁说的话，慢慢讲给你听。
     </div>
   </div>
@@ -33,7 +33,7 @@ const latest = getLatestEpisode(all);
       {latest && (
         <section style="padding-bottom:48px;">
           <div style="text-align:center; margin-bottom:18px;">
-            <h2 style="font-size:clamp(24px,3vw,30px); letter-spacing:-0.03em; margin:0 0 6px; color:#2c2433;">本站收听</h2>
+            <h2 style="font-size:var(--text-3xl); letter-spacing:0.02em; margin:0 0 6px; color:#2c2433;">本站收听</h2>
             <p style="color:#8a7d96; font-size:14px; margin:0;">最新一集，无需跳转即可播放。</p>
           </div>
           <div class="latest-card">
@@ -65,7 +65,7 @@ const latest = getLatestEpisode(all);
       <!-- Platforms -->
       <section style="padding-bottom:48px;">
         <div style="text-align:center; margin-bottom:18px;">
-          <h2 style="font-size:clamp(24px,3vw,30px); letter-spacing:-0.03em; margin:0 0 6px; color:#2c2433;">选择你的平台</h2>
+          <h2 style="font-size:var(--text-3xl); letter-spacing:0.02em; margin:0 0 6px; color:#2c2433;">选择你的平台</h2>
           <p style="color:#8a7d96; font-size:14px; margin:0;">选一个你习惯的平台订阅或收听。</p>
         </div>
         <div style="display:grid; gap:14px;">
@@ -115,7 +115,9 @@ const latest = getLatestEpisode(all);
   }
   .latest-title {
     margin: 0 0 12px;
-    font-size: clamp(22px, 3vw, 26px);
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: 600;
     letter-spacing: -0.02em;
     color: #2c2433;
     text-align: center;

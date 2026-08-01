@@ -115,17 +115,19 @@ function ThanksState({ notified }: { notified: boolean }) {
         }
         .thanks-title {
           margin: 0 0 12px;
-          font-size: clamp(26px, 4vw, 36px);
-          line-height: 1.2;
-          letter-spacing: -0.03em;
-          font-weight: 700;
+          font-family: var(--font-serif);
+          font-size: var(--text-4xl);
+          line-height: 1.25;
+          letter-spacing: 0.02em;
+          font-weight: 600;
           color: #2c2433;
         }
         .thanks-lead {
           margin: 0 auto;
           max-width: 34ch;
           color: #6d6376;
-          font-size: 16px;
+          font-family: var(--font-sans);
+          font-size: var(--text-base);
           line-height: 1.85;
         }
         .thanks-card {
