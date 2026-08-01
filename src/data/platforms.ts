@@ -19,11 +19,6 @@ export const platforms: Platform[] = [
 
 export const socialLinks = [
   {
-    name: 'X (Twitter)',
-    url: 'https://x.com/askinglovepod',
-    icon: 'x',
-  },
-  {
     name: 'Instagram',
     url: 'https://www.instagram.com/askinglovepod',
     icon: 'instagram',
