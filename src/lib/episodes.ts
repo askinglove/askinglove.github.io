@@ -110,10 +110,13 @@ export function getLatestEpisode(all: Episode[]): Episode | undefined {
   return all.slice().sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime())[0];
 }
 
-/** Resolve Start Here pack, preserving config order; skip missing ids. */
+/** Resolve Start Here pack, preserving config order; skip missing ids.
+ * Always return an even count for the 2-column homepage grid. */
 export function getStartHereEpisodes(all: Episode[]): Episode[] {
   const byId = new Map(all.map((ep) => [ep.rssId, ep]));
-  return START_HERE_IDS.map((id) => byId.get(id)).filter((ep): ep is Episode => !!ep);
+  const list = START_HERE_IDS.map((id) => byId.get(id)).filter((ep): ep is Episode => !!ep);
+  if (list.length % 2 === 1) list.pop();
+  return list;
 }
 
 /** Count episodes per tag. */
