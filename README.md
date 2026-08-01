@@ -28,17 +28,25 @@ On every `npm run build`, `src/lib/rss.ts` fetches and parses the feed, merges `
 
 No separate commit of generated episode files is required — CI/build regenerates the catalog.
 
-### Auto-update when you publish on RSS.com
+### Fully automatic when you publish on RSS.com
 
-The site is static, so it cannot “live poll” the feed in the visitor’s browser for new episodes. Instead GitHub Actions acts as an **RSS reader**:
+The site is static (no live poll in the browser). **GitHub Actions is the RSS reader + content worker:**
 
-1. **Every 2 hours** (and on every push to `main`) CI fingerprints the public feed (`scripts/feed-fingerprint.mjs`).
-2. If episode ids / titles / pubDates / enclosures **changed**, it rebuilds and deploys.
-3. If nothing changed on a scheduled run, it **skips** the build (saves Actions minutes).
+| Cadence | What happens |
+|---|---|
+| **Every 2 hours** | Fingerprint feed. If unchanged → skip. If new/changed → full pipeline. |
+| **Feed changed** | 1) Sync Spotify/Apple deep links 2) Whisper-transcribe **missing** episodes → 正文 + `.srt` 3) Commit to `main` 4) Build + deploy |
+| **Push to main** | Rebuild + deploy; refresh store links (skip Whisper unless manual run) |
+| **Actions → Run workflow** | Force full enrich + deploy |
 
-You can also run **Actions → Deploy to GitHub Pages → Run workflow** anytime after publishing.
+After you hit publish on RSS.com, within ~**0–2 hours** the site should show the new episode, deep links, 阅读全文, and captions in the repo.
 
-**Not auto-generated from RSS:** 正文 (`transcripts/`), captions (`captions/`), Spotify deep-link map (run `sync:store-links` when you want). Those still need a commit (or a future workflow step).
+**Still manual (by design):** uploading the `.srt` to YouTube Studio, and pasting the short YT description (`npm run transcript:youtube -- {id}`). YouTube has no unattended upload API in this pipeline.
+
+Optional secrets (improve Spotify matching):
+
+- `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET`
+- `PUBLIC_GA_ID`
 
 ### Overrides
 

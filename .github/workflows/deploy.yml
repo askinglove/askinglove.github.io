@@ -1,16 +1,25 @@
 name: Deploy to GitHub Pages
 
+# Automatic pipeline:
+# - Poll RSS every 2 hours
+# - On new/changed feed items: sync Spotify/Apple deep links, transcribe new eps, commit, build, deploy
+# - On code push: rebuild & deploy (skip heavy STT unless manual run)
+
 on:
   push:
     branches: [main]
-  # Rebuild when RSS.com gets a new episode (no git push needed)
   schedule:
-    # Every 2 hours — GitHub cron can drift ~15 min
     - cron: '20 */2 * * *'
   workflow_dispatch:
+    inputs:
+      force_enrich:
+        description: 'Force re-sync store links + transcribe missing episodes'
+        required: false
+        default: true
+        type: boolean
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -19,11 +28,11 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # On schedule only: skip deploy if the public feed is unchanged.
   check-feed:
     runs-on: ubuntu-latest
     outputs:
       should_deploy: ${{ steps.decide.outputs.should_deploy }}
+      should_enrich: ${{ steps.decide.outputs.should_enrich }}
       feed_hash: ${{ steps.fp.outputs.hash }}
     steps:
       - name: Checkout
@@ -48,23 +57,40 @@ jobs:
           path: .feed-sentinel
           key: rss-feed-${{ steps.fp.outputs.hash }}
 
-      - name: Decide whether to deploy
+      - name: Decide deploy / enrich
         id: decide
         run: |
           EVENT="${{ github.event_name }}"
           HIT="${{ steps.cache.outputs.cache-hit }}"
+          MSG="${{ github.event.head_commit.message }}"
+
+          should_deploy=true
+          should_enrich=false
+
           if [ "$EVENT" = "schedule" ] && [ "$HIT" = "true" ]; then
-            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
-            echo "RSS feed unchanged since last scheduled deploy — skipping."
-          else
-            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
-            echo "ok ${{ steps.fp.outputs.hash }}" > .feed-sentinel
-            if [ "$EVENT" = "schedule" ]; then
-              echo "RSS feed changed (or first run) — deploying."
+            should_deploy=false
+            should_enrich=false
+            echo "RSS unchanged — skip scheduled deploy."
+          elif [ "$EVENT" = "schedule" ]; then
+            should_enrich=true
+            echo "RSS changed (or first run) — deploy + full auto enrich."
+          elif [ "$EVENT" = "workflow_dispatch" ]; then
+            should_enrich=true
+            echo "Manual run — deploy + enrich."
+          elif [ "$EVENT" = "push" ]; then
+            if echo "$MSG" | grep -q "chore: auto-sync"; then
+              should_enrich=false
+              echo "Bot auto-sync push — deploy only (no re-enrich)."
             else
-              echo "Deploy triggered by $EVENT."
+              # Code push: still refresh store links (fast); skip Whisper unless you re-run manually
+              should_enrich=stores
+              echo "Human/code push — deploy + store-link sync only."
             fi
           fi
+
+          echo "should_deploy=$should_deploy" >> "$GITHUB_OUTPUT"
+          echo "should_enrich=$should_enrich" >> "$GITHUB_OUTPUT"
+          echo "ok ${{ steps.fp.outputs.hash }}" > .feed-sentinel
 
   build:
     needs: check-feed
@@ -73,6 +99,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -80,16 +109,63 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install dependencies
+      - name: Setup Python
+        if: needs.check-feed.outputs.should_enrich == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install npm dependencies
         run: npm ci
 
-      - name: Build Astro site (fetches live RSS)
+      - name: Sync Spotify / Apple deep links
+        if: needs.check-feed.outputs.should_enrich == 'true' || needs.check-feed.outputs.should_enrich == 'stores'
+        continue-on-error: true
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+        run: npm run sync:store-links
+
+      - name: Install ffmpeg + Whisper (new episodes only)
+        if: needs.check-feed.outputs.should_enrich == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          pip install --quiet faster-whisper opencc-python-reimplemented
+
+      - name: Transcribe missing episodes (正文 + captions)
+        if: needs.check-feed.outputs.should_enrich == 'true'
+        run: |
+          # Without --force: only episodes that lack transcripts/captions
+          python3 scripts/transcribe-all.py --model base
+        env:
+          HF_HUB_DISABLE_TELEMETRY: '1'
+
+      - name: Commit generated content back to main
+        if: needs.check-feed.outputs.should_enrich == 'true' || needs.check-feed.outputs.should_enrich == 'stores'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/data/episode-store-links.json \
+            src/data/transcripts \
+            src/data/captions \
+            || true
+          if git diff --staged --quiet; then
+            echo "No generated file changes to commit."
+          else
+            git commit -m "chore: auto-sync feed content (store links + transcripts)"
+            git push origin HEAD:main
+            echo "Pushed auto-sync commit."
+          fi
+
+      - name: Build Astro site (live RSS fetch)
         run: npx astro build
         env:
-          # Optional: wire GA later via repo secrets
           PUBLIC_GA_ID: ${{ secrets.PUBLIC_GA_ID }}
 
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
