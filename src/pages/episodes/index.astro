@@ -1,12 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Footer from '../../components/Footer.astro';
-import { getCollection } from 'astro:content';
-import { platforms } from '../../data/platforms';
+import { getPublishedEpisodes } from '../../lib/rss';
+import { episodeHref, formatEpisodeDate } from '../../lib/episodes';
 
-const allEpisodes = (await getCollection('episodes'))
-  .filter((ep) => !ep.data.draft)
-  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+const allEpisodes = await getPublishedEpisodes();
 ---
 
 <BaseLayout
@@ -30,18 +28,27 @@ const allEpisodes = (await getCollection('episodes'))
         {allEpisodes.length > 0 ? (
           <div style="display:grid; gap:16px;">
             {allEpisodes.map((episode) => (
-              <a href={`/episodes/${episode.id.replace(/\.md$/, '')}`} class="episode-card">
+              <a href={episodeHref(episode)} class="episode-card">
                 <!-- Cover -->
                 <div class="episode-cover">
-                  <span style="font-size:24px; color:rgba(199,155,230,0.5);">问</span>
+                  {episode.coverImage ? (
+                    <img src={episode.coverImage} alt="" loading="lazy" width="72" height="72" />
+                  ) : (
+                    <span style="font-size:24px; color:rgba(199,155,230,0.5);">问</span>
+                  )}
                 </div>
                 <!-- Content -->
                 <div class="episode-content">
-                  <strong>{episode.data.title}</strong>
-                  <p>{episode.data.description}</p>
-                  {episode.data.tags.length > 0 && (
+                  <strong>{episode.title}</strong>
+                  <p>{episode.hook}</p>
+                  <div class="episode-meta">
+                    {episode.episodeNumber != null && <span>第 {episode.episodeNumber} 集</span>}
+                    {episode.duration && <span>{episode.duration}</span>}
+                    <span>{formatEpisodeDate(episode.pubDate)}</span>
+                  </div>
+                  {episode.tags.length > 0 && (
                     <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;">
-                      {episode.data.tags.map((tag: string) => (
+                      {episode.tags.map((tag: string) => (
                         <span style="padding:4px 10px; border-radius:999px; background:rgba(141,81,187,0.06); color:#b49cc8; font-size:12px;">{tag}</span>
                       ))}
                     </div>
@@ -104,6 +111,12 @@ const allEpisodes = (await getCollection('episodes'))
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
+  }
+  .episode-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .episode-content {
     flex: 1;
@@ -125,6 +138,14 @@ const allEpisodes = (await getCollection('episodes'))
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+  .episode-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #9688a3;
   }
   .episode-arrow {
     width: 36px;

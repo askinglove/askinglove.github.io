@@ -1,48 +1,65 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Footer from '../../components/Footer.astro';
-import { getCollection, render } from 'astro:content';
 import { platforms } from '../../data/platforms';
+import type { Episode } from '../../lib/rss';
+import { getPublishedEpisodes } from '../../lib/rss';
+import {
+  episodeHref,
+  formatEpisodeDate,
+  getEpisodeStaticPaths,
+  getRelatedEpisodes,
+  rehydrateEpisode,
+} from '../../lib/episodes';
 
 export async function getStaticPaths() {
-  const episodes = await getCollection('episodes');
-  return episodes
-    .filter((ep) => !ep.data.draft)
-    .map((episode) => ({
-      params: { slug: episode.id.replace(/\.md$/, '') },
-      props: { episode },
-    }));
+  return getEpisodeStaticPaths();
 }
 
-const { episode } = Astro.props;
+interface Props {
+  episode: Episode;
+}
 
-const formattedDate = new Intl.DateTimeFormat('zh-CN', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-}).format(episode.data.pubDate);
+const episode = rehydrateEpisode(Astro.props.episode);
+const all = await getPublishedEpisodes();
+const related = getRelatedEpisodes(episode, all, 3);
+const formattedDate = formatEpisodeDate(episode.pubDate);
+
+const metaParts: string[] = [];
+if (episode.episodeNumber != null) metaParts.push(`第 ${episode.episodeNumber} 集`);
+if (formattedDate) metaParts.push(formattedDate);
+if (episode.duration) metaParts.push(episode.duration);
+
+const bodySectionTitle = episode.transcript ? '文稿' : episode.showNotes ? '节目笔记' : null;
+const bodySectionText = episode.transcript || episode.showNotes || '';
 ---
 
 <BaseLayout
-  title={episode.data.title}
-  description={episode.data.description}
+  title={episode.title}
+  description={episode.hook}
   ogType="article"
+  ogImage={episode.coverImage}
 >
   <!-- Hero -->
   <div class="wrap" style="padding-top:105px; padding-bottom:44px; text-align:center;">
-    {episode.data.tags.length > 0 && (
+    {episode.tags.length > 0 && (
       <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:22px;">
-        {episode.data.tags.map((tag: string) => (
+        {episode.tags.map((tag: string) => (
           <span style="padding:6px 12px; border-radius:999px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); color:#cec2d9; font-size:12px;">{tag}</span>
         ))}
       </div>
     )}
-    <h1 style="margin:0 auto 18px; max-width:16ch; font-size:clamp(34px,5.4vw,54px); line-height:1.08; letter-spacing:-0.05em; font-weight:700;">
-      {episode.data.title}
+    <h1 style="margin:0 auto 18px; max-width:18ch; font-size:clamp(34px,5.4vw,54px); line-height:1.08; letter-spacing:-0.05em; font-weight:700;">
+      {episode.title}
     </h1>
-    <div style="max-width:560px; margin:0 auto; color:#cec2d9; font-size:clamp(16px,1.8vw,18px); line-height:1.85; white-space:pre-line;">
-      {episode.data.description}
+    <div style="max-width:560px; margin:0 auto; color:#cec2d9; font-size:clamp(16px,1.8vw,18px); line-height:1.85;">
+      {episode.hook}
     </div>
+    {metaParts.length > 0 && (
+      <div style="margin-top:20px; color:#a89ab5; font-size:13px; letter-spacing:0.04em;">
+        {metaParts.join(' · ')}
+      </div>
+    )}
   </div>
 
   <!-- Light section -->
@@ -53,13 +70,86 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
       <section style="padding-bottom:32px;">
         <div style="border-radius:20px; overflow:hidden; border:1px solid rgba(44,36,51,0.07); box-shadow:0 6px 20px rgba(18,12,28,0.06);">
           <iframe
-            src={episode.data.rssEmbedUrl}
-            title={`收听: ${episode.data.title}`}
+            src={episode.rssEmbedUrl}
+            title={`收听: ${episode.title}`}
             width="100%"
             height="180"
             style="border:none; display:block;"
             allow="autoplay"
           ></iframe>
+        </div>
+      </section>
+
+      <!-- 文稿 / 节目笔记 -->
+      <section style="padding-bottom:48px;">
+        {bodySectionTitle && bodySectionText ? (
+          <>
+            <h2 style="font-size:clamp(22px,3vw,28px); letter-spacing:-0.03em; margin:0 0 18px; color:#2c2433; font-weight:700;">
+              {bodySectionTitle}
+            </h2>
+            <div class="notes-body">
+              {bodySectionText.split(/\n\n+/).map((para) => (
+                <p>{para}</p>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div class="notes-empty">
+            <p>本集文稿整理中。</p>
+          </div>
+        )}
+      </section>
+
+      <!-- Related episodes -->
+      {related.length > 0 && (
+        <section class="related-episodes" style="padding-bottom:48px;">
+          <h2 style="font-size:clamp(22px,3vw,28px); letter-spacing:-0.03em; margin:0 0 18px; color:#2c2433; font-weight:700;">
+            相关节目
+          </h2>
+          <div style="display:grid; gap:12px;">
+            {related.map((rel) => (
+              <a href={episodeHref(rel)} class="related-card">
+                <div class="related-cover">
+                  {rel.coverImage ? (
+                    <img src={rel.coverImage} alt="" loading="lazy" width="56" height="56" />
+                  ) : (
+                    <span>问</span>
+                  )}
+                </div>
+                <div class="related-content">
+                  <strong>{rel.title}</strong>
+                  {rel.episodeNumber != null && (
+                    <span class="related-meta">第 {rel.episodeNumber} 集{rel.duration ? ` · ${rel.duration}` : ''}</span>
+                  )}
+                </div>
+                <div class="related-arrow">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- CTA: subscribe + submit -->
+      <section style="padding-bottom:48px;">
+        <div class="cta-stack">
+          <div class="newsletter-card">
+            <h3 class="newsletter-title">不想错过问情播客的更新？</h3>
+            <p class="newsletter-copy">订阅邮件，收到新节目、精选内容和最新动态。</p>
+            <a href="https://askinglovepod.substack.com" target="_blank" rel="noopener noreferrer" class="newsletter-cta">
+              在 Substack 订阅
+            </a>
+          </div>
+          <div class="submit-card">
+            <h3 class="newsletter-title">把你的故事讲给我们听</h3>
+            <p class="newsletter-copy">有一段不知道该跟谁说的感情经历？欢迎匿名投稿。</p>
+            <a href="/submit" class="btn btn-primary" style="padding:15px 24px; font-size:15px;">
+              投稿你的故事
+            </a>
+          </div>
         </div>
       </section>
 
@@ -82,17 +172,6 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
         </div>
       </section>
 
-      <!-- Newsletter -->
-      <section style="padding-bottom:56px;">
-        <div class="newsletter-card">
-          <h3 class="newsletter-title">不想错过问情播客的更新？</h3>
-          <p class="newsletter-copy">订阅邮件，收到新节目、精选内容和最新动态。</p>
-          <a href="https://askinglovepod.substack.com" target="_blank" rel="noopener noreferrer" class="newsletter-cta">
-            在 Substack 订阅
-          </a>
-        </div>
-      </section>
-
     </div>
 
     <div style="padding-top:8px;">
@@ -102,6 +181,137 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
 </BaseLayout>
 
 <style>
+  .notes-body p {
+    margin: 0 0 1.1em;
+    color: #6d6376;
+    font-size: 16px;
+    line-height: 1.9;
+  }
+  .notes-body p:last-child {
+    margin-bottom: 0;
+  }
+  .notes-empty p {
+    margin: 0;
+    color: #9688a3;
+    font-size: 15px;
+    text-align: center;
+    padding: 12px 0;
+  }
+
+  .related-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: white;
+    border: 1px solid rgba(44, 36, 51, 0.07);
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(18, 12, 28, 0.04);
+    text-decoration: none;
+    color: #2c2433;
+    transition: all 0.2s ease;
+  }
+  .related-cover {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: radial-gradient(circle at 30% 20%, rgba(255,132,124,0.12), transparent 40%), linear-gradient(135deg, #161021, #1d1428);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: rgba(199,155,230,0.5);
+    font-size: 18px;
+  }
+  .related-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .related-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .related-content strong {
+    display: block;
+    font-size: 15px;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+  .related-meta {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: #9688a3;
+  }
+  .related-arrow {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(141, 81, 187, 0.07);
+    color: #8d51bb;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+  .related-card:hover {
+    border-color: rgba(141, 81, 187, 0.22);
+    box-shadow: 0 10px 28px rgba(18, 12, 28, 0.10);
+    transform: translateY(-2px);
+  }
+  .related-card:hover .related-arrow {
+    background: rgba(141, 81, 187, 0.14);
+    transform: translateX(2px);
+  }
+
+  .cta-stack {
+    display: grid;
+    gap: 16px;
+  }
+  .newsletter-card,
+  .submit-card {
+    text-align: center;
+    padding: 36px 32px;
+    background: white;
+    border: 1px solid rgba(44, 36, 51, 0.06);
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(18, 12, 28, 0.025);
+  }
+  .newsletter-title {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #2c2433;
+    margin: 0 0 14px;
+  }
+  .newsletter-copy {
+    font-size: 15px;
+    color: #9688a3;
+    line-height: 1.8;
+    margin: 0 0 28px;
+  }
+  .newsletter-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 24px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #8d51bb, #a66cd8);
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(141, 81, 187, 0.10);
+    transition: all 0.2s ease;
+  }
+  .newsletter-cta:hover {
+    box-shadow: 0 8px 18px rgba(141, 81, 187, 0.16);
+    transform: translateY(-1px);
+  }
+
   .platform-card {
     display: flex;
     justify-content: space-between;
@@ -146,46 +356,6 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
   .platform-card:active {
     transform: translateY(0);
     box-shadow: 0 4px 12px rgba(18, 12, 28, 0.06);
-  }
-
-  .newsletter-card {
-    text-align: center;
-    padding: 44px 38px;
-    background: white;
-    border: 1px solid rgba(44, 36, 51, 0.06);
-    border-radius: 20px;
-    box-shadow: 0 2px 10px rgba(18, 12, 28, 0.025);
-  }
-  .newsletter-title {
-    font-size: 21px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: #2c2433;
-    margin: 0 0 14px;
-  }
-  .newsletter-copy {
-    font-size: 15px;
-    color: #9688a3;
-    line-height: 1.8;
-    margin: 0 0 36px;
-  }
-  .newsletter-cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 15px 24px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #8d51bb, #a66cd8);
-    color: white;
-    font-size: 15px;
-    font-weight: 600;
-    text-decoration: none;
-    box-shadow: 0 4px 12px rgba(141, 81, 187, 0.10);
-    transition: all 0.2s ease;
-  }
-  .newsletter-cta:hover {
-    box-shadow: 0 8px 18px rgba(141, 81, 187, 0.16);
-    transform: translateY(-1px);
   }
 
   @media (max-width: 600px) {
