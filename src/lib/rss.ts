@@ -6,6 +6,7 @@
 import overridesJson from '../data/episode-overrides.json';
 import { autoTag } from '../data/episode-tags';
 import { getStoreLinks } from './store-links';
+import { toSimplified } from './zh';
 
 export const RSS_FEED_URL = 'https://media.rss.com/askinglove/feed.xml';
 
@@ -130,7 +131,8 @@ function extractItems(xml: string): string[] {
 }
 
 function parseItem(itemXml: string): Episode | null {
-  const title = decodeXml(extractTag(itemXml, 'title') || extractTag(itemXml, 'itunes:title') || '');
+  const titleRaw = decodeXml(extractTag(itemXml, 'title') || extractTag(itemXml, 'itunes:title') || '');
+  const title = toSimplified(titleRaw);
   const link = (extractTag(itemXml, 'link') || '').trim();
   const rssId = extractRssId(link, itemXml);
   if (!rssId) {
@@ -150,12 +152,12 @@ function parseItem(itemXml: string): Episode | null {
     undefined;
 
   const ov = overrides[rssId] ?? {};
-  const paragraphs = extractParagraphs(descriptionHtmlRaw);
+  const paragraphs = extractParagraphs(descriptionHtmlRaw).map((p) => toSimplified(p));
   const usefulParagraphs = paragraphs.filter((p) => !isBoilerplate(p));
-  const descriptionText = usefulParagraphs.join('\n\n').trim() || stripHtml(descriptionHtmlRaw).trim();
+  const descriptionText = usefulParagraphs.join('\n\n').trim() || toSimplified(stripHtml(descriptionHtmlRaw).trim());
   const hookFromFeed = (usefulParagraphs[0] || descriptionText).slice(0, 180);
   const showNotes = descriptionText;
-  const hook = (ov.hook?.trim() || hookFromFeed).trim();
+  const hook = toSimplified((ov.hook?.trim() || hookFromFeed).trim());
   const tags =
     ov.tags && ov.tags.length > 0
       ? ov.tags.slice(0, 4)
@@ -183,12 +185,12 @@ function parseItem(itemXml: string): Episode | null {
     id: rssId,
     slug: rssId,
     rssId,
-    title: ov.title?.trim() || title,
+    title: toSimplified(ov.title?.trim() || title),
     hook,
     summary: hook,
     descriptionHtml: usefulParagraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join(''),
     descriptionText,
-    transcript: ov.transcript?.trim() || '',
+    transcript: toSimplified(ov.transcript?.trim() || ''),
     showNotes,
     pubDate: Number.isNaN(pubDate.getTime()) ? new Date(0) : pubDate,
     duration,

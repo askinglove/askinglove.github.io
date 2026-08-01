@@ -11,10 +11,11 @@
     "sync:store-links": "node scripts/sync-store-links.mjs"
   },
   "dependencies": {
-    "astro": "^5.7.10",
     "@astrojs/preact": "^4.0.0",
-    "preact": "^10.25.0",
-    "@astrojs/sitemap": "^3.3.0"
+    "@astrojs/sitemap": "^3.3.0",
+    "astro": "^5.7.10",
+    "opencc-js": "^1.4.1",
+    "preact": "^10.25.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.3",

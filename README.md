@@ -52,6 +52,7 @@ Edit `src/data/episode-overrides.json` keyed by RSS episode id:
 - Without override tags, keywords in `src/data/episode-tags.ts` auto-tag episodes.
 - Show notes are built for **every** episode (`src/lib/show-notes.ts`): feed setup + concept detection + reflection by tag; override fields polish individual eps.
 - Share UI: copy episode link, copy full notes text, share show, submit.
+- Feed text is normalized to **简体中文** at parse time (`src/lib/zh.ts` / OpenCC) so mixed 繁体 forms (隱瞞、願意、該…) do not appear on the site.
 
 ### Start Here pack
 

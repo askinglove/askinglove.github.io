@@ -12,6 +12,7 @@ import {
   type Concept,
 } from '../data/concepts';
 import { show } from '../data/show';
+import { toSimplified } from './zh';
 
 export type ShowNotes = {
   /** One strong hook line (title or override). */
@@ -47,10 +48,11 @@ export function buildShowNotes(
   related: Episode[],
   override?: ShowNotesOverride,
 ): ShowNotes {
-  const hook = (override?.hook?.trim() || episode.title).trim();
-  const setup =
+  const hook = toSimplified((override?.hook?.trim() || episode.title).trim());
+  const setup = toSimplified(
     override?.setup?.trim() ||
-    buildSetup(episode.descriptionText || episode.showNotes || episode.hook);
+      buildSetup(episode.descriptionText || episode.showNotes || episode.hook),
+  );
 
   const detected = detectConcepts(`${episode.title}\n${episode.hook}\n${episode.descriptionText}`);
   const conceptName = override?.concept?.trim();
@@ -58,8 +60,8 @@ export function buildShowNotes(
   if (conceptName) {
     const known = CONCEPTS.find((c) => c.name === conceptName);
     concept = {
-      name: conceptName,
-      blurb: known?.blurb || '',
+      name: toSimplified(conceptName),
+      blurb: toSimplified(known?.blurb || ''),
     };
   } else if (detected[0]) {
     concept = { name: detected[0].name, blurb: detected[0].blurb };
@@ -69,11 +71,13 @@ export function buildShowNotes(
   if (takeaways.length === 0) {
     takeaways = buildTakeaways(episode, detected);
   }
+  takeaways = takeaways.map((t) => toSimplified(t));
 
-  const reflection =
+  const reflection = toSimplified(
     override?.reflection?.trim() ||
-    pickReflection(episode.tags) ||
-    DEFAULT_REFLECTION;
+      pickReflection(episode.tags) ||
+      DEFAULT_REFLECTION,
+  );
 
   const episodeUrl = new URL(episodeHref(episode), show.url).href;
   const submitUrl = new URL('/submit', show.url).href;
