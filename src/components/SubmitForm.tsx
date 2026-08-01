@@ -8,6 +8,8 @@ export default function SubmitForm() {
   const [story, setStory] = useState('');
   const [question, setQuestion] = useState('');
   const [consent, setConsent] = useState(false);
+  const [wantNotify, setWantNotify] = useState(false);
+  const [email, setEmail] = useState('');
   const [submitState, setSubmitState] = useState<SubmitState>('idle');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -16,6 +18,11 @@ export default function SubmitForm() {
     if (!story.trim()) e.story = '请写下你的故事';
     else if (story.length < 50) e.story = `请再多写一点（至少 50 字，当前 ${story.length} 字）`;
     if (!question.trim()) e.question = '请写下你最困惑的问题';
+    if (wantNotify) {
+      const v = email.trim();
+      if (!v) e.email = '如需通知，请留下邮箱；或不勾选通知选项';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) e.email = '请输入有效的邮箱地址';
+    }
     return e;
   }
 
@@ -27,14 +34,19 @@ export default function SubmitForm() {
 
     setSubmitState('submitting');
     try {
+      const body: Record<string, string> = {
+        '你的故事': story,
+        '最困惑的问题': question,
+        '同意匿名改编': '是',
+      };
+      if (wantNotify && email.trim()) {
+        body['成片通知邮箱'] = email.trim();
+        body['_replyto'] = email.trim();
+      }
       const res = await fetch(FORMSPREE_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          '你的故事': story,
-          '最困惑的问题': question,
-          '同意匿名改编': '是',
-        }),
+        body: JSON.stringify(body),
       });
       setSubmitState(res.ok ? 'success' : 'error');
     } catch {
@@ -42,33 +54,11 @@ export default function SubmitForm() {
     }
   }
 
-  // --- Success ---
   if (submitState === 'success') {
     return (
-      <>
-        {/* Dark hero for success */}
-        <div style={{ textAlign: 'center', paddingBottom: '48px' }}>
-          <div style={{
-            display: 'inline-block', padding: '7px 12px', borderRadius: '999px',
-            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
-            color: '#cec2d9', fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase' as const,
-            marginBottom: '22px',
-          }}>Submission Received</div>
-          <h1 style={{
-            margin: '0 auto 16px', maxWidth: '13ch',
-            fontSize: 'clamp(34px, 5.4vw, 56px)', lineHeight: '1.08',
-            letterSpacing: '-0.05em', fontWeight: 700, color: '#f6f1fb',
-          }}>
-            我们收到了。<br />谢谢你愿意分享。
-          </h1>
-          <p style={{ color: '#cec2d9', fontSize: '17px', lineHeight: '1.85' }}>
-            有些话能说出来，本身就已经很不容易。
-          </p>
-        </div>
-
-        {/* Success card */}
+      <div style={{ maxWidth: '780px', margin: '0 auto' }}>
         <div style={{
-          maxWidth: '780px', margin: '0 auto', textAlign: 'center', padding: '38px',
+          textAlign: 'center', padding: '38px 28px',
           background: 'linear-gradient(180deg, #fff, #f8f1fb)',
           border: '1px solid rgba(44,36,51,0.08)', borderRadius: '30px',
           boxShadow: '0 18px 44px rgba(18,12,28,0.08)',
@@ -82,23 +72,34 @@ export default function SubmitForm() {
           <div style={{
             fontSize: 'clamp(28px, 4vw, 40px)', lineHeight: '1.1',
             letterSpacing: '-0.03em', marginBottom: '14px', fontWeight: 700, color: '#2c2433',
-          }}>投稿已提交</div>
+          }}>我们收到了</div>
           <div style={{
-            maxWidth: '34ch', margin: '0 auto', color: '#6d6376',
+            maxWidth: '36ch', margin: '0 auto', color: '#6d6376',
             fontSize: '16px', lineHeight: '1.88',
           }}>
-            谢谢你愿意分享。<br />我们会认真阅读每一个投稿。
+            谢谢你愿意分享。我们会认真阅读每一个投稿；不一定每一篇都会被改编成节目。
+            {wantNotify && email.trim() ? ' 若本篇成片，我们会尽量用你留下的邮箱通知你。' : ''}
           </div>
-          <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap' as const, marginTop: '28px' }}>
-            <a class="btn btn-primary" href="/">返回首页</a>
-            <a class="btn btn-light" href="/listen">继续收听</a>
+          <div style={{
+            display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap',
+            marginTop: '28px',
+          }}>
+            <a class="btn btn-primary" href="/episodes">去听节目</a>
+            <a class="btn btn-light" href="/listen">收听页</a>
+            <a
+              class="btn btn-light"
+              href="https://askinglovepod.substack.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              订阅 Substack
+            </a>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
-  // --- Error ---
   if (submitState === 'error') {
     return (
       <div style={{ textAlign: 'center', padding: '48px 0' }}>
@@ -109,28 +110,32 @@ export default function SubmitForm() {
           boxShadow: '0 16px 34px rgba(217,68,68,0.24)',
         }}>✕</div>
         <h2 style={{ fontSize: '24px', color: '#2c2433', marginBottom: '12px' }}>提交没有成功</h2>
-        <p style={{ color: '#6d6376', marginBottom: '24px' }}>如果你已经写了很久，建议先复制保存一下，再重新提交。</p>
+        <p style={{ color: '#6d6376', marginBottom: '24px' }}>
+          如果你已经写了很久，建议先复制保存一下，再重新提交。
+        </p>
         <button onClick={() => setSubmitState('idle')} class="btn btn-primary">重新提交</button>
       </div>
     );
   }
 
-  // --- Form ---
   return (
     <div class="card card-lg" style={{ padding: '30px' }}>
       <form onSubmit={handleSubmit} noValidate>
         <div style={{ display: 'grid', gap: '18px' }}>
-          {/* Story */}
           <div>
             <div style={{ fontSize: '15px', fontWeight: 600, color: '#2c2433', marginBottom: '8px' }}>你的故事</div>
             <div style={{ fontSize: '14px', color: '#6d6376', lineHeight: '1.75', marginBottom: '10px' }}>
-              发生了什么？最难受的点是什么？
+              发生了什么？最难受的点是什么？默认匿名，不需要写真实姓名。
             </div>
             <textarea
               value={story}
               onInput={(e) => {
                 setStory((e.target as HTMLTextAreaElement).value);
-                setErrors((prev) => { const n = { ...prev }; delete n.story; return n; });
+                setErrors((prev) => {
+                  const n = { ...prev };
+                  delete n.story;
+                  return n;
+                });
               }}
               placeholder="在这里开始写你的故事……"
               style={{
@@ -144,9 +149,10 @@ export default function SubmitForm() {
             {errors.story && <p style={{ color: '#d94444', fontSize: '13px', marginTop: '6px' }}>{errors.story}</p>}
           </div>
 
-          {/* Question */}
           <div>
-            <div style={{ fontSize: '15px', fontWeight: 600, color: '#2c2433', marginBottom: '8px' }}>你现在最困惑的问题是什么？</div>
+            <div style={{ fontSize: '15px', fontWeight: 600, color: '#2c2433', marginBottom: '8px' }}>
+              你现在最困惑的问题是什么？
+            </div>
             <div style={{ fontSize: '14px', color: '#6d6376', lineHeight: '1.75', marginBottom: '10px' }}>
               例如：我到底该不该继续等？
             </div>
@@ -154,7 +160,11 @@ export default function SubmitForm() {
               value={question}
               onInput={(e) => {
                 setQuestion((e.target as HTMLTextAreaElement).value);
-                setErrors((prev) => { const n = { ...prev }; delete n.question; return n; });
+                setErrors((prev) => {
+                  const n = { ...prev };
+                  delete n.question;
+                  return n;
+                });
               }}
               placeholder="在这里写下你现在最想问的问题……"
               style={{
@@ -165,12 +175,15 @@ export default function SubmitForm() {
                 fontFamily: 'inherit',
               }}
             />
-            {errors.question && <p style={{ color: '#d94444', fontSize: '13px', marginTop: '6px' }}>{errors.question}</p>}
+            {errors.question && (
+              <p style={{ color: '#d94444', fontSize: '13px', marginTop: '6px' }}>{errors.question}</p>
+            )}
           </div>
 
-          {/* Consent checkbox */}
           <div>
-            <div style={{ fontSize: '15px', fontWeight: 600, color: '#2c2433', marginBottom: '10px' }}>是否允许匿名用于节目创作</div>
+            <div style={{ fontSize: '15px', fontWeight: 600, color: '#2c2433', marginBottom: '10px' }}>
+              是否允许匿名用于节目创作
+            </div>
             <label style={{
               display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer',
               padding: '16px 18px', borderRadius: '18px',
@@ -187,13 +200,68 @@ export default function SubmitForm() {
             </label>
           </div>
 
-          {/* Submit */}
+          <div>
+            <div style={{ fontSize: '15px', fontWeight: 600, color: '#2c2433', marginBottom: '10px' }}>
+              成片通知（可选）
+            </div>
+            <label style={{
+              display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer',
+              padding: '16px 18px', borderRadius: '18px',
+              border: '1px solid rgba(141,81,187,0.12)', background: 'rgba(141,81,187,0.04)',
+              color: '#594c66', fontSize: '15px', lineHeight: '1.75', marginBottom: wantNotify ? '12px' : 0,
+            }}>
+              <input
+                type="checkbox"
+                checked={wantNotify}
+                onChange={() => {
+                  setWantNotify(!wantNotify);
+                  setErrors((prev) => {
+                    const n = { ...prev };
+                    delete n.email;
+                    return n;
+                  });
+                }}
+                style={{ marginTop: '4px', accentColor: '#8d51bb', width: '18px', height: '18px', flexShrink: 0 }}
+              />
+              <span>成片后如需通知，可留下邮箱（可选）</span>
+            </label>
+            {wantNotify && (
+              <>
+                <input
+                  type="email"
+                  value={email}
+                  onInput={(e) => {
+                    setEmail((e.target as HTMLInputElement).value);
+                    setErrors((prev) => {
+                      const n = { ...prev };
+                      delete n.email;
+                      return n;
+                    });
+                  }}
+                  placeholder="your@email.com"
+                  style={{
+                    width: '100%', minHeight: '48px', padding: '14px 16px', borderRadius: '16px',
+                    border: `1px solid ${errors.email ? '#e88' : 'rgba(141,81,187,0.12)'}`,
+                    background: 'rgba(141,81,187,0.07)', color: '#2c2433', fontSize: '15px',
+                    outline: 'none', fontFamily: 'inherit',
+                  }}
+                />
+                {errors.email && (
+                  <p style={{ color: '#d94444', fontSize: '13px', marginTop: '6px' }}>{errors.email}</p>
+                )}
+                <p style={{ margin: '8px 0 0', fontSize: '13px', color: '#9688a3', lineHeight: 1.6 }}>
+                  邮箱仅用于成片通知，不会公开，也不会用于推销。
+                </p>
+              </>
+            )}
+          </div>
+
           <div style={{ paddingTop: '4px' }}>
             <button
               type="submit"
               disabled={!consent || submitState === 'submitting'}
               class="btn btn-primary"
-              style={{ width: '100%' }}
+              style={{ width: '100%', minHeight: '52px' }}
             >
               {submitState === 'submitting' ? '提交中...' : '提交投稿'}
             </button>

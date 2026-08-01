@@ -1,7 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Footer from '../../components/Footer.astro';
+import AudioPlayer from '../../components/AudioPlayer.astro';
+import JsonLd from '../../components/JsonLd.astro';
 import { platforms } from '../../data/platforms';
+import { show } from '../../data/show';
 import type { Episode } from '../../lib/rss';
 import { getPublishedEpisodes } from '../../lib/rss';
 import {
@@ -11,6 +14,7 @@ import {
   getRelatedEpisodes,
   rehydrateEpisode,
 } from '../../lib/episodes';
+import { podcastEpisodeJsonLd } from '../../lib/jsonld';
 
 export async function getStaticPaths() {
   return getEpisodeStaticPaths();
@@ -24,6 +28,7 @@ const episode = rehydrateEpisode(Astro.props.episode);
 const all = await getPublishedEpisodes();
 const related = getRelatedEpisodes(episode, all, 3);
 const formattedDate = formatEpisodeDate(episode.pubDate);
+const canonicalUrl = new URL(episodeHref(episode), show.url).href;
 
 const metaParts: string[] = [];
 if (episode.episodeNumber != null) metaParts.push(`第 ${episode.episodeNumber} 集`);
@@ -32,31 +37,54 @@ if (episode.duration) metaParts.push(episode.duration);
 
 const bodySectionTitle = episode.transcript ? '文稿' : episode.showNotes ? '节目笔记' : null;
 const bodySectionText = episode.transcript || episode.showNotes || '';
+
+const platformLinks = [
+  ...platforms.map((p) => ({
+    name: p.name,
+    url: p.url,
+    label: `在 ${p.name} 收听`,
+  })),
+  {
+    name: 'RSS.com 本集',
+    url: episode.rssPageUrl,
+    label: '在 RSS.com 打开本集',
+  },
+];
+
+const sorted = all.slice().sort((a, b) => a.pubDate.getTime() - b.pubDate.getTime());
+const idx = sorted.findIndex((ep) => ep.rssId === episode.rssId);
+const prevEp = idx > 0 ? sorted[idx - 1] : undefined;
+const nextEp = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : undefined;
 ---
 
 <BaseLayout
   title={episode.title}
-  description={episode.hook}
+  description={episode.summary || episode.hook}
   ogType="article"
   ogImage={episode.coverImage}
+  canonicalUrl={canonicalUrl}
 >
+  <JsonLd slot="head" data={podcastEpisodeJsonLd(episode)} />
+
   <!-- Hero -->
   <div class="wrap" style="padding-top:105px; padding-bottom:44px; text-align:center;">
     {episode.tags.length > 0 && (
       <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:22px;">
         {episode.tags.map((tag: string) => (
-          <span style="padding:6px 12px; border-radius:999px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); color:#cec2d9; font-size:12px;">{tag}</span>
+          <a
+            href={`/episodes?tag=${encodeURIComponent(tag)}`}
+            class="tag-chip"
+          >
+            {tag}
+          </a>
         ))}
       </div>
     )}
     <h1 style="margin:0 auto 18px; max-width:18ch; font-size:clamp(34px,5.4vw,54px); line-height:1.08; letter-spacing:-0.05em; font-weight:700;">
       {episode.title}
     </h1>
-    <div style="max-width:560px; margin:0 auto; color:#cec2d9; font-size:clamp(16px,1.8vw,18px); line-height:1.85;">
-      {episode.hook}
-    </div>
     {metaParts.length > 0 && (
-      <div style="margin-top:20px; color:#a89ab5; font-size:13px; letter-spacing:0.04em;">
+      <div style="margin-top:4px; color:#a89ab5; font-size:13px; letter-spacing:0.04em;">
         {metaParts.join(' · ')}
       </div>
     )}
@@ -66,18 +94,21 @@ const bodySectionText = episode.transcript || episode.showNotes || '';
   <div class="light" style="padding-top:48px;">
     <div class="wrap" style="max-width:560px;">
 
-      <!-- Player -->
-      <section style="padding-bottom:32px;">
-        <div style="border-radius:20px; overflow:hidden; border:1px solid rgba(44,36,51,0.07); box-shadow:0 6px 20px rgba(18,12,28,0.06);">
-          <iframe
-            src={episode.rssEmbedUrl}
-            title={`收听: ${episode.title}`}
-            width="100%"
-            height="180"
-            style="border:none; display:block;"
-            allow="autoplay"
-          ></iframe>
-        </div>
+      <!-- Native audio player -->
+      {episode.audioUrl && (
+        <section style="padding-bottom:28px;">
+          <AudioPlayer
+            src={episode.audioUrl}
+            type={episode.audioType}
+            title="本站收听"
+            downloadUrl={episode.audioUrl}
+          />
+        </section>
+      )}
+
+      <!-- Hook -->
+      <section style="padding-bottom:36px;">
+        <p class="hook-text">{episode.hook}</p>
       </section>
 
       <!-- 文稿 / 节目笔记 -->
@@ -118,8 +149,12 @@ const bodySectionText = episode.transcript || episode.showNotes || '';
                 </div>
                 <div class="related-content">
                   <strong>{rel.title}</strong>
-                  {rel.episodeNumber != null && (
-                    <span class="related-meta">第 {rel.episodeNumber} 集{rel.duration ? ` · ${rel.duration}` : ''}</span>
+                  {(rel.episodeNumber != null || rel.duration) && (
+                    <span class="related-meta">
+                      {rel.episodeNumber != null ? `第 ${rel.episodeNumber} 集` : ''}
+                      {rel.episodeNumber != null && rel.duration ? ' · ' : ''}
+                      {rel.duration || ''}
+                    </span>
                   )}
                 </div>
                 <div class="related-arrow">
@@ -133,16 +168,9 @@ const bodySectionText = episode.transcript || episode.showNotes || '';
         </section>
       )}
 
-      <!-- CTA: subscribe + submit -->
+      <!-- CTA: submit + subscribe -->
       <section style="padding-bottom:48px;">
         <div class="cta-stack">
-          <div class="newsletter-card">
-            <h3 class="newsletter-title">不想错过问情播客的更新？</h3>
-            <p class="newsletter-copy">订阅邮件，收到新节目、精选内容和最新动态。</p>
-            <a href="https://askinglovepod.substack.com" target="_blank" rel="noopener noreferrer" class="newsletter-cta">
-              在 Substack 订阅
-            </a>
-          </div>
           <div class="submit-card">
             <h3 class="newsletter-title">把你的故事讲给我们听</h3>
             <p class="newsletter-copy">有一段不知道该跟谁说的感情经历？欢迎匿名投稿。</p>
@@ -150,18 +178,25 @@ const bodySectionText = episode.transcript || episode.showNotes || '';
               投稿你的故事
             </a>
           </div>
+          <div class="newsletter-card">
+            <h3 class="newsletter-title">不想错过问情播客的更新？</h3>
+            <p class="newsletter-copy">订阅邮件，收到新节目、精选内容和最新动态。</p>
+            <a href={show.substackUrl} target="_blank" rel="noopener noreferrer" class="newsletter-cta">
+              在 Substack 订阅
+            </a>
+          </div>
         </div>
       </section>
 
       <!-- Platforms -->
-      <section style="padding-bottom:64px;">
+      <section style="padding-bottom:40px;">
         <div style="text-align:center; margin-bottom:16px;">
           <h2 style="font-size:clamp(22px,3vw,28px); letter-spacing:-0.03em; margin:0; color:#2c2433; font-weight:700;">在其他平台收听</h2>
         </div>
         <div style="display:grid; gap:14px;" class="platform-grid">
-          {platforms.map((p) => (
+          {platformLinks.map((p) => (
             <a href={p.url} target="_blank" rel="noopener noreferrer" class="platform-card">
-              <strong>在 {p.name} 收听</strong>
+              <strong>{p.label}</strong>
               <span class="platform-arrow">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -172,6 +207,26 @@ const bodySectionText = episode.transcript || episode.showNotes || '';
         </div>
       </section>
 
+      <!-- Prev / next -->
+      {(prevEp || nextEp) && (
+        <section style="padding-bottom:64px;">
+          <div class="prev-next">
+            {prevEp ? (
+              <a href={episodeHref(prevEp)} class="pn-card">
+                <span class="pn-label">上一集</span>
+                <strong>{prevEp.title}</strong>
+              </a>
+            ) : <div />}
+            {nextEp ? (
+              <a href={episodeHref(nextEp)} class="pn-card pn-next">
+                <span class="pn-label">下一集</span>
+                <strong>{nextEp.title}</strong>
+              </a>
+            ) : <div />}
+          </div>
+        </section>
+      )}
+
     </div>
 
     <div style="padding-top:8px;">
@@ -181,6 +236,27 @@ const bodySectionText = episode.transcript || episode.showNotes || '';
 </BaseLayout>
 
 <style>
+  .tag-chip {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #cec2d9;
+    font-size: 12px;
+    text-decoration: none;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tag-chip:hover {
+    color: white;
+    border-color: rgba(255,255,255,0.18);
+  }
+  .hook-text {
+    margin: 0;
+    color: #6d6376;
+    font-size: 17px;
+    line-height: 1.9;
+    text-align: left;
+  }
   .notes-body p {
     margin: 0 0 1.1em;
     color: #6d6376;
@@ -317,7 +393,7 @@ const bodySectionText = episode.transcript || episode.showNotes || '';
     justify-content: space-between;
     align-items: center;
     padding: 0 24px;
-    height: 72px;
+    min-height: 72px;
     background: white;
     border: 1px solid rgba(44, 36, 51, 0.08);
     border-radius: 18px;
@@ -328,9 +404,9 @@ const bodySectionText = episode.transcript || episode.showNotes || '';
     transition: all 0.2s ease;
   }
   .platform-card strong {
-    font-size: 17px;
+    font-size: 16px;
     letter-spacing: -0.01em;
-    line-height: 1;
+    line-height: 1.3;
   }
   .platform-arrow {
     width: 36px;
@@ -353,12 +429,45 @@ const bodySectionText = episode.transcript || episode.showNotes || '';
     background: rgba(141, 81, 187, 0.14);
     transform: translateX(2px);
   }
-  .platform-card:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 12px rgba(18, 12, 28, 0.06);
+
+  .prev-next {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .pn-card {
+    display: block;
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: white;
+    border: 1px solid rgba(44, 36, 51, 0.07);
+    text-decoration: none;
+    color: #2c2433;
+    transition: border-color 0.15s;
+  }
+  .pn-card:hover {
+    border-color: rgba(141, 81, 187, 0.22);
+  }
+  .pn-next {
+    text-align: right;
+  }
+  .pn-label {
+    display: block;
+    font-size: 12px;
+    color: #9688a3;
+    margin-bottom: 6px;
+  }
+  .pn-card strong {
+    font-size: 14px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   @media (max-width: 600px) {
-    .platform-grid { grid-template-columns: 1fr !important; }
+    .prev-next { grid-template-columns: 1fr; }
+    .pn-next { text-align: left; }
   }
 </style>

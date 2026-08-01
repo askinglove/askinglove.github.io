@@ -19,6 +19,10 @@ const siteTitle = '问情播客 AskingLove';
 const fullTitle = title === siteTitle ? title : `${title} — ${siteTitle}`;
 const canonical = canonicalUrl || Astro.url.href;
 const ogImageUrl = new URL(ogImage, Astro.site).href;
+
+/** Only inject GA when a real measurement ID is provided. Never ship G-XXXXXXXXXX. */
+const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined)?.trim();
+const gaEnabled = import.meta.env.PROD && !!gaId && /^G-[A-Z0-9]+$/i.test(gaId);
 ---
 
 <meta charset="utf-8" />
@@ -43,16 +47,14 @@ const ogImageUrl = new URL(ogImage, Astro.site).href;
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-<!-- Google Analytics (GA4) -->
-<!-- To activate: replace G-XXXXXXXXXX with your GA4 measurement ID -->
-{import.meta.env.PROD && (
+{gaEnabled && (
   <>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script is:inline>
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+    <script is:inline define:vars={{ gaId }}>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-XXXXXXXXXX');
+      gtag('config', gaId);
     </script>
   </>
 )}

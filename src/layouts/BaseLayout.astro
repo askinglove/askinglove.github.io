@@ -8,9 +8,10 @@ interface Props {
   description: string;
   ogImage?: string;
   ogType?: string;
+  canonicalUrl?: string;
 }
 
-const { title, description, ogImage, ogType } = Astro.props;
+const { title, description, ogImage, ogType, canonicalUrl } = Astro.props;
 ---
 
 <!doctype html>
@@ -21,7 +22,9 @@ const { title, description, ogImage, ogType } = Astro.props;
       description={description}
       ogImage={ogImage}
       ogType={ogType}
+      canonicalUrl={canonicalUrl}
     />
+    <slot name="head" />
   </head>
   <body class="font-sans antialiased">
     <Header />

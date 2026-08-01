@@ -4,6 +4,7 @@
 
 import type { Episode } from './rss';
 import { getPublishedEpisodes } from './rss';
+import { START_HERE_IDS } from '../data/start-here';
 
 export { autoTag } from '../data/episode-tags';
 
@@ -58,25 +59,28 @@ export function getRelatedEpisodes(
   return picked;
 }
 
-/** Static paths for primary slug + aliases. */
+/**
+ * Static paths for primary (numeric) slugs only.
+ * Pretty aliases (e.g. dark-crush) use Astro redirects → canonical slug.
+ */
 export async function getEpisodeStaticPaths() {
   const episodes = await getPublishedEpisodes();
-  const paths: { params: { slug: string }; props: { episode: Episode } }[] = [];
+  return episodes.map((episode) => ({
+    params: { slug: episode.slug },
+    props: { episode },
+  }));
+}
 
-  for (const episode of episodes) {
-    paths.push({
-      params: { slug: episode.slug },
-      props: { episode },
-    });
-    for (const alias of episode.aliases) {
-      paths.push({
-        params: { slug: alias },
-        props: { episode },
-      });
+/** Build redirect map from alias → canonical episode path. */
+export async function getEpisodeAliasRedirects(): Promise<Record<string, string>> {
+  const episodes = await getPublishedEpisodes();
+  const map: Record<string, string> = {};
+  for (const ep of episodes) {
+    for (const alias of ep.aliases) {
+      map[`/episodes/${alias}`] = `/episodes/${ep.slug}`;
     }
   }
-
-  return paths;
+  return map;
 }
 
 export function formatEpisodeDate(date: Date | string): string {
@@ -97,6 +101,59 @@ export function rehydrateEpisode(raw: Episode): Episode {
   };
 }
 
-export function episodeHref(episode: Episode): string {
+export function episodeHref(episode: Episode | { slug: string }): string {
   return `/episodes/${episode.slug}`;
+}
+
+/** Latest published episode by pubDate. */
+export function getLatestEpisode(all: Episode[]): Episode | undefined {
+  return all.slice().sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime())[0];
+}
+
+/** Resolve Start Here pack, preserving config order; skip missing ids. */
+export function getStartHereEpisodes(all: Episode[]): Episode[] {
+  const byId = new Map(all.map((ep) => [ep.rssId, ep]));
+  return START_HERE_IDS.map((id) => byId.get(id)).filter((ep): ep is Episode => !!ep);
+}
+
+/** Union of all tags sorted by frequency then name. */
+export function getAllTags(all: Episode[]): string[] {
+  const counts = new Map<string, number>();
+  for (const ep of all) {
+    for (const tag of ep.tags) {
+      counts.set(tag, (counts.get(tag) || 0) + 1);
+    }
+  }
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-CN'))
+    .map(([tag]) => tag);
+}
+
+/** JSON-serializable card fields for client islands. */
+export type EpisodeCardData = {
+  slug: string;
+  title: string;
+  summary: string;
+  duration: string;
+  episodeNumber?: number;
+  pubDateLabel: string;
+  pubDateIso: string;
+  tags: string[];
+  coverImage?: string;
+  href: string;
+};
+
+export function toEpisodeCardData(ep: Episode): EpisodeCardData {
+  return {
+    slug: ep.slug,
+    title: ep.title,
+    summary: ep.summary || ep.hook,
+    duration: ep.duration,
+    episodeNumber: ep.episodeNumber,
+    pubDateLabel: formatEpisodeDate(ep.pubDate),
+    pubDateIso: ep.pubDate.toISOString(),
+    tags: ep.tags,
+    coverImage: ep.coverImage,
+    href: episodeHref(ep),
+  };
 }

@@ -1,13 +1,30 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
-import { platforms, socialLinks } from '../data/platforms';
+import JsonLd from '../components/JsonLd.astro';
+import AudioPlayer from '../components/AudioPlayer.astro';
+import { platforms } from '../data/platforms';
+import { show } from '../data/show';
+import { getPublishedEpisodes } from '../lib/rss';
+import {
+  episodeHref,
+  formatEpisodeDate,
+  getLatestEpisode,
+  getStartHereEpisodes,
+} from '../lib/episodes';
+import { podcastSeriesJsonLd } from '../lib/jsonld';
+
+const all = await getPublishedEpisodes();
+const latest = getLatestEpisode(all);
+const startHere = getStartHereEpisodes(all);
 ---
 
 <BaseLayout
   title="问情播客 AskingLove"
-  description="一档关于爱情、关系与情绪的中文播客。这里聊心动、失望、拉扯，也聊那些你不知道该跟谁说的话。"
+  description={show.description}
 >
+  <JsonLd slot="head" data={podcastSeriesJsonLd(all.length)} />
+
   <!-- Hero -->
   <div class="wrap" style="padding-top:130px; padding-bottom:110px; text-align:center;">
     <div style="display:inline-block; padding:8px 14px; border-radius:999px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); color:#cec2d9; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:32px;">
@@ -21,7 +38,7 @@ import { platforms, socialLinks } from '../data/platforms';
       这里聊心动、失望、拉扯，也聊那些你不知道该跟谁说的话。<br class="hidden-mobile">像一个会认真听你说话的朋友，陪你把乱成一团的情绪理清一点。
     </div>
     <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:56px;">
-      <a class="btn btn-primary" href="/listen">开始收听</a>
+      <a class="btn btn-primary" href={latest ? episodeHref(latest) : '/episodes'}>开始收听</a>
       <a class="btn btn-secondary" href="/submit">投稿你的故事</a>
     </div>
   </div>
@@ -30,41 +47,92 @@ import { platforms, socialLinks } from '../data/platforms';
   <div class="light">
     <div class="wrap">
 
-      <!-- Featured Episode -->
-      <section id="episodes">
-        <div class="section-head">
-          <div class="kicker">Start Here</div>
-          <h2>从这里开始听</h2>
-        </div>
-        <div class="card card-lg" style="overflow:hidden;">
-          <div style="display:grid; grid-template-columns:320px 1fr;" class="feature-grid">
-            <!-- Cover -->
-            <div style="min-height:400px; padding:28px; background:radial-gradient(circle at 22% 18%, rgba(255,132,124,0.18), transparent 24%), radial-gradient(circle at 78% 78%, rgba(199,155,230,0.10), transparent 24%), linear-gradient(180deg,#161021,#1d1428); color:white; display:flex; flex-direction:column; justify-content:space-between;" class="feature-cover">
-              <small style="color:#a7d6ff; font-size:11px; letter-spacing:0.18em; text-transform:uppercase;">Featured Episode</small>
-              <strong style="font-size:clamp(30px,3vw,38px); line-height:1.12; max-width:6ch;">暗恋是一个人的<br>独角戏</strong>
-              <small style="color:#d8c6e6; font-size:11px; letter-spacing:0.16em; text-transform:uppercase;">问情播客 AskingLove</small>
-            </div>
-            <!-- Copy -->
-            <div style="padding:44px 40px; display:flex; flex-direction:column; justify-content:center;" class="feature-copy">
-              <div style="color:#9688a3; font-size:13px; letter-spacing:0.04em; margin-bottom:14px;">入口推荐</div>
-              <div style="font-size:clamp(30px,3vw,40px); line-height:1.08; letter-spacing:-0.03em; margin-bottom:18px; font-weight:700;">
-                你喜欢的，<br>到底是她，<br>还是那个深陷暗恋的自己？
+      <!-- Latest episode -->
+      {latest && (
+        <section id="latest">
+          <div class="section-head">
+            <div class="kicker">Latest</div>
+            <h2>最新一集</h2>
+          </div>
+          <div class="card card-lg" style="overflow:hidden;">
+            <div style="display:grid; grid-template-columns:320px 1fr;" class="feature-grid">
+              <div style="min-height:360px; padding:28px; background:radial-gradient(circle at 22% 18%, rgba(255,132,124,0.18), transparent 24%), radial-gradient(circle at 78% 78%, rgba(199,155,230,0.10), transparent 24%), linear-gradient(180deg,#161021,#1d1428); color:white; display:flex; flex-direction:column; justify-content:space-between;" class="feature-cover">
+                <small style="color:#a7d6ff; font-size:11px; letter-spacing:0.18em; text-transform:uppercase;">Latest Episode</small>
+                <strong style="font-size:clamp(26px,2.8vw,34px); line-height:1.2;">
+                  {latest.title}
+                </strong>
+                <small style="color:#d8c6e6; font-size:11px; letter-spacing:0.16em; text-transform:uppercase;">问情播客 AskingLove</small>
               </div>
-              <div style="color:#6d6376; font-size:16px; line-height:1.9; margin-bottom:24px; max-width:34ch;">
-                准备好告白，才发现对方<br>在问你怎么送礼物给别的男生。
-              </div>
-              <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:30px;">
-                <span style="padding:6px 12px; border-radius:999px; background:rgba(141,81,187,0.06); color:#b49cc8; font-size:12px; letter-spacing:0.02em;">暗恋</span>
-                <span style="padding:6px 12px; border-radius:999px; background:rgba(141,81,187,0.06); color:#b49cc8; font-size:12px; letter-spacing:0.02em;">单相思</span>
-                <span style="padding:6px 12px; border-radius:999px; background:rgba(141,81,187,0.06); color:#b49cc8; font-size:12px; letter-spacing:0.02em;">放不下</span>
-              </div>
-              <div>
-                <a class="btn btn-primary" style="padding:17px 30px; font-size:16px;" href="/episodes/dark-crush">收听这一集</a>
+              <div style="padding:40px 36px; display:flex; flex-direction:column; justify-content:center;" class="feature-copy">
+                <div style="color:#9688a3; font-size:13px; letter-spacing:0.04em; margin-bottom:14px;">
+                  {[
+                    latest.episodeNumber != null ? `第 ${latest.episodeNumber} 集` : null,
+                    formatEpisodeDate(latest.pubDate),
+                    latest.duration,
+                  ].filter(Boolean).join(' · ')}
+                </div>
+                <div style="font-size:clamp(22px,2.4vw,28px); line-height:1.25; letter-spacing:-0.02em; margin-bottom:16px; font-weight:700;">
+                  {latest.title}
+                </div>
+                <div style="color:#6d6376; font-size:16px; line-height:1.85; margin-bottom:22px;">
+                  {latest.hook}
+                </div>
+                {latest.tags.length > 0 && (
+                  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px;">
+                    {latest.tags.map((tag) => (
+                      <span style="padding:6px 12px; border-radius:999px; background:rgba(141,81,187,0.06); color:#b49cc8; font-size:12px;">{tag}</span>
+                    ))}
+                  </div>
+                )}
+                {latest.audioUrl && (
+                  <div style="margin-bottom:22px;">
+                    <AudioPlayer
+                      src={latest.audioUrl}
+                      type={latest.audioType}
+                      title="本站收听"
+                      downloadUrl={latest.audioUrl}
+                    />
+                  </div>
+                )}
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                  <a class="btn btn-primary" style="padding:15px 26px; font-size:15px;" href={episodeHref(latest)}>查看这一集</a>
+                  <a class="btn btn-light" style="padding:15px 26px; font-size:15px;" href="/episodes">全部节目</a>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      <!-- Start Here pack -->
+      {startHere.length > 0 && (
+        <section id="start-here">
+          <div class="section-head">
+            <div class="kicker">Start Here</div>
+            <h2>从这里开始听</h2>
+            <div class="sub">不确定从哪一集开始？这几集是不错的入口。</div>
+          </div>
+          <div class="start-grid">
+            {startHere.map((ep) => (
+              <a href={episodeHref(ep)} class="start-card">
+                <div class="start-meta">
+                  {ep.episodeNumber != null && <span>第 {ep.episodeNumber} 集</span>}
+                  {ep.duration && <span>{ep.duration}</span>}
+                </div>
+                <strong>{ep.title}</strong>
+                <p>{ep.hook}</p>
+                {ep.tags.length > 0 && (
+                  <div class="start-tags">
+                    {ep.tags.slice(0, 3).map((tag) => (
+                      <span>{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       <!-- About -->
       <section id="about">
@@ -139,6 +207,9 @@ import { platforms, socialLinks } from '../data/platforms';
             </a>
           ))}
         </div>
+        <div style="text-align:center; margin-top:22px;">
+          <a class="btn btn-light" href="/listen" style="padding:14px 28px; font-size:15px;">查看收听页</a>
+        </div>
       </section>
 
       <!-- Newsletter -->
@@ -146,7 +217,7 @@ import { platforms, socialLinks } from '../data/platforms';
         <div class="newsletter-card">
           <h3 class="newsletter-title">不想错过问情播客的更新？</h3>
           <p class="newsletter-copy">订阅邮件，收到新节目、精选内容和最新动态。</p>
-          <a href="https://askinglovepod.substack.com" target="_blank" rel="noopener noreferrer" class="newsletter-cta">
+          <a href={show.substackUrl} target="_blank" rel="noopener noreferrer" class="newsletter-cta">
             在 Substack 订阅
           </a>
         </div>
@@ -158,7 +229,6 @@ import { platforms, socialLinks } from '../data/platforms';
 </BaseLayout>
 
 <style>
-  /* About cards — uniform */
   .about-card {
     padding: 28px;
     display: flex;
@@ -180,7 +250,65 @@ import { platforms, socialLinks } from '../data/platforms';
     flex: 1;
   }
 
-  /* Platform cards */
+  .start-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .start-card {
+    display: block;
+    padding: 24px;
+    background: white;
+    border: 1px solid rgba(44, 36, 51, 0.07);
+    border-radius: 20px;
+    box-shadow: 0 4px 14px rgba(18, 12, 28, 0.04);
+    text-decoration: none;
+    color: #2c2433;
+    transition: all 0.2s ease;
+  }
+  .start-card:hover {
+    border-color: rgba(141, 81, 187, 0.2);
+    box-shadow: 0 10px 28px rgba(18, 12, 28, 0.09);
+    transform: translateY(-2px);
+  }
+  .start-meta {
+    display: flex;
+    gap: 10px;
+    font-size: 12px;
+    color: #9688a3;
+    margin-bottom: 10px;
+  }
+  .start-card strong {
+    display: block;
+    font-size: 18px;
+    line-height: 1.35;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .start-card p {
+    margin: 0;
+    color: #6d6376;
+    font-size: 14px;
+    line-height: 1.7;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .start-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .start-tags span {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(141, 81, 187, 0.06);
+    color: #b49cc8;
+    font-size: 12px;
+  }
+
   .platform-card {
     display: flex;
     justify-content: space-between;
@@ -221,12 +349,7 @@ import { platforms, socialLinks } from '../data/platforms';
     background: rgba(141, 81, 187, 0.12);
     transform: translateX(2px);
   }
-  .platform-card:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 12px rgba(18, 12, 28, 0.06);
-  }
 
-  /* Newsletter card */
   .newsletter-card {
     text-align: center;
     padding: 28px 32px 24px;
@@ -272,11 +395,15 @@ import { platforms, socialLinks } from '../data/platforms';
     .three-up { grid-template-columns: 1fr !important; }
   }
   @media (max-width: 720px) {
-    .feature-cover { min-height: 280px !important; }
+    .feature-cover { min-height: 240px !important; }
     .feature-copy { padding: 24px !important; }
     .listen-grid { grid-template-columns: 1fr !important; }
+    .start-grid { grid-template-columns: 1fr !important; }
   }
   @media (max-width: 430px) {
     h1 { font-size: clamp(38px, 11vw, 52px) !important; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .start-card, .platform-card { transition: none; }
   }
 </style>

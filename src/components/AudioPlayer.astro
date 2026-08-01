@@ -1,0 +1,84 @@
+---
+interface Props {
+  src: string;
+  title?: string;
+  type?: string;
+  downloadUrl?: string;
+}
+
+const {
+  src,
+  title = '收听本集',
+  type = 'audio/mpeg',
+  downloadUrl,
+} = Astro.props;
+---
+
+<div class="audio-player">
+  <div class="audio-player-label">{title}</div>
+  <audio
+    class="audio-el"
+    controls
+    preload="none"
+    controlslist="nodownload"
+  >
+    <source src={src} type={type} />
+    你的浏览器不支持音频播放。
+    {downloadUrl && (
+      <>
+        {' '}
+        <a href={downloadUrl}>下载本集音频</a>
+      </>
+    )}
+  </audio>
+  {downloadUrl && (
+    <p class="audio-fallback">
+      播放有问题？
+      <a href={downloadUrl} target="_blank" rel="noopener noreferrer">打开音频文件</a>
+      或前往
+      <a href="/listen">收听页</a>
+      选择其他平台。
+    </p>
+  )}
+</div>
+
+<style>
+  .audio-player {
+    padding: 20px 22px;
+    border-radius: 20px;
+    background: white;
+    border: 1px solid rgba(44, 36, 51, 0.07);
+    box-shadow: 0 6px 20px rgba(18, 12, 28, 0.06);
+  }
+  .audio-player-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #9688a3;
+    margin-bottom: 12px;
+  }
+  .audio-el {
+    width: 100%;
+    height: 48px;
+    border-radius: 12px;
+  }
+  .audio-fallback {
+    margin: 12px 0 0;
+    font-size: 13px;
+    color: #9688a3;
+    line-height: 1.6;
+  }
+  .audio-fallback a {
+    color: #8d51bb;
+    text-decoration: none;
+  }
+  .audio-fallback a:hover {
+    text-decoration: underline;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .audio-player {
+      transition: none;
+    }
+  }
+</style>

@@ -1,16 +1,73 @@
 ---
+import { navLinks, navCta } from '../data/navigation';
 import { socialLinks } from '../data/platforms';
+
+const footerNav = [...navLinks, { label: navCta.label, href: navCta.href }];
 ---
 
 <footer style="background:#140f1c; color:#cec2d9; padding:42px 0 56px;">
-  <div class="wrap" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px; align-items:center;">
-    <div><a href="/" style="color:white; text-decoration:none;"><strong>问情播客 AskingLove</strong></a></div>
-    <div style="display:flex; gap:18px; font-size:14px;">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <a href="/" style="color:white; text-decoration:none;">
+        <strong>问情播客 AskingLove</strong>
+      </a>
+      <p class="footer-tagline">一档关于爱情、关系与情绪的中文播客</p>
+    </div>
+
+    <nav class="footer-nav" aria-label="页脚导航">
+      {footerNav.map((link) => (
+        <a href={link.href}>{link.label}</a>
+      ))}
+    </nav>
+
+    <div class="footer-social">
       {socialLinks.map((s) => (
-        <a href={s.url} target="_blank" rel="noopener noreferrer" style="color:#cec2d9; text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#cec2d9'">
+        <a href={s.url} target="_blank" rel="noopener noreferrer">
           {s.name}
         </a>
       ))}
     </div>
   </div>
 </footer>
+
+<style>
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 28px 24px;
+    align-items: start;
+  }
+  .footer-tagline {
+    margin: 10px 0 0;
+    font-size: 13px;
+    color: #a89ab5;
+    line-height: 1.6;
+  }
+  .footer-nav,
+  .footer-social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 18px;
+    font-size: 14px;
+  }
+  .footer-nav a,
+  .footer-social a {
+    color: #cec2d9;
+    text-decoration: none;
+    transition: color 0.2s;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .footer-nav a:hover,
+  .footer-social a:hover {
+    color: white;
+  }
+
+  @media (max-width: 720px) {
+    .footer-inner {
+      grid-template-columns: 1fr;
+      gap: 22px;
+    }
+  }
+</style>

@@ -15,10 +15,14 @@ export type Episode = {
   slug: string;
   rssId: string;
   title: string;
-  /** One-paragraph plain-text hook for hero / cards. */
+  /** One-paragraph plain-text hook for hero / cards (≤ ~180 chars ideal). */
   hook: string;
+  /** Alias of hook for data-model clarity / cards. */
+  summary: string;
   /** Original cleaned description HTML (optional display). */
   descriptionHtml: string;
+  /** Plain description for SEO / search. */
+  descriptionText: string;
   /** Override transcript (markdown/plain); empty if none. */
   transcript: string;
   /** Cleaned show notes (plain text) when no transcript. */
@@ -26,16 +30,21 @@ export type Episode = {
   pubDate: Date;
   /** Formatted mm:ss from itunes:duration seconds. */
   duration: string;
+  /** Duration in seconds when parseable. */
+  durationSec: number;
+  /** ISO 8601 duration e.g. PT10M50S for JSON-LD. */
+  durationIso: string;
   episodeNumber?: number;
   season?: number;
   audioUrl?: string;
+  audioType: string;
   coverImage?: string;
   rssEmbedUrl: string;
   rssPageUrl: string;
   tags: string[];
   featured: boolean;
   draft: boolean;
-  /** Extra URL slugs that resolve to this episode (e.g. dark-crush). */
+  /** Extra URL slugs that redirect to this episode (e.g. dark-crush). */
   aliases: string[];
 };
 
@@ -133,21 +142,31 @@ function parseItem(itemXml: string): Episode | null {
   const ov = overrides[rssId] ?? {};
   const paragraphs = extractParagraphs(descriptionHtmlRaw);
   const usefulParagraphs = paragraphs.filter((p) => !isBoilerplate(p));
-  const hookFromFeed = usefulParagraphs[0] || stripHtml(descriptionHtmlRaw).slice(0, 160);
-  const showNotes = usefulParagraphs.join('\n\n').trim();
+  const descriptionText = usefulParagraphs.join('\n\n').trim() || stripHtml(descriptionHtmlRaw).trim();
+  const hookFromFeed = (usefulParagraphs[0] || descriptionText).slice(0, 180);
+  const showNotes = descriptionText;
   const hook = (ov.hook?.trim() || hookFromFeed).trim();
   const tags =
     ov.tags && ov.tags.length > 0
-      ? ov.tags.slice(0, 3)
-      : autoTag(`${title} ${hook}`, 3);
+      ? ov.tags.slice(0, 4)
+      : autoTag(`${title} ${hook} ${descriptionText.slice(0, 400)}`, 4);
 
   const episodeNumber = episodeNumberRaw ? parseInt(episodeNumberRaw, 10) : undefined;
   const season = seasonRaw ? parseInt(seasonRaw, 10) : undefined;
   const pubDate = pubDateRaw ? new Date(pubDateRaw) : new Date(0);
+  const durationSec = parseDurationToSeconds(durationSeconds);
+  const duration = formatDurationSeconds(durationSeconds);
+  const audioType = extractAttr(itemXml, 'enclosure', 'type') || 'audio/mpeg';
 
   const aliases: string[] = [];
   if (ov.slug && ov.slug !== rssId) {
     aliases.push(ov.slug);
+  }
+
+  // Skip items with no playable audio
+  if (!enclosureUrl) {
+    console.warn(`[rss] Skipping item without enclosure audio: ${title.slice(0, 40)}`);
+    return null;
   }
 
   return {
@@ -156,14 +175,19 @@ function parseItem(itemXml: string): Episode | null {
     rssId,
     title: ov.title?.trim() || title,
     hook,
+    summary: hook,
     descriptionHtml: usefulParagraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join(''),
+    descriptionText,
     transcript: ov.transcript?.trim() || '',
     showNotes,
     pubDate: Number.isNaN(pubDate.getTime()) ? new Date(0) : pubDate,
-    duration: formatDurationSeconds(durationSeconds),
+    duration,
+    durationSec,
+    durationIso: secondsToIso8601(durationSec),
     episodeNumber: Number.isFinite(episodeNumber) ? episodeNumber : undefined,
     season: Number.isFinite(season) ? season : undefined,
-    audioUrl: enclosureUrl || undefined,
+    audioUrl: enclosureUrl,
+    audioType,
     coverImage,
     rssEmbedUrl: `https://player.rss.com/askinglove/${rssId}`,
     rssPageUrl: `https://rss.com/podcasts/askinglove/${rssId}`,
@@ -281,14 +305,43 @@ function escapeHtml(s: string): string {
     .replace(/"/g, '&quot;');
 }
 
+export function parseDurationToSeconds(raw: string | number): number {
+  if (typeof raw === 'number') {
+    return Number.isFinite(raw) && raw >= 0 ? Math.floor(raw) : 0;
+  }
+  const t = String(raw || '').trim();
+  if (!t) return 0;
+  if (t.includes(':')) {
+    const parts = t.split(':').map((p) => parseInt(p, 10));
+    if (parts.some((n) => !Number.isFinite(n))) return 0;
+    if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    if (parts.length === 2) return parts[0] * 60 + parts[1];
+    return 0;
+  }
+  const seconds = parseInt(t, 10);
+  return Number.isFinite(seconds) && seconds >= 0 ? seconds : 0;
+}
+
 export function formatDurationSeconds(raw: string | number): string {
-  const seconds = typeof raw === 'number' ? raw : parseInt(String(raw).trim(), 10);
-  if (!Number.isFinite(seconds) || seconds < 0) return '';
-  // Already mm:ss style in rare feeds
   if (typeof raw === 'string' && raw.includes(':')) {
     return raw.trim();
   }
+  const seconds = parseDurationToSeconds(raw);
+  if (!seconds) return '';
   const m = Math.floor(seconds / 60);
   const s = Math.floor(seconds % 60);
   return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+/** Convert seconds to ISO 8601 duration for schema.org (e.g. PT10M50S). */
+export function secondsToIso8601(totalSec: number): string {
+  if (!Number.isFinite(totalSec) || totalSec <= 0) return '';
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = Math.floor(totalSec % 60);
+  let out = 'PT';
+  if (h > 0) out += `${h}H`;
+  if (m > 0 || h > 0) out += `${m}M`;
+  out += `${s}S`;
+  return out;
 }

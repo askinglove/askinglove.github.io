@@ -1,12 +1,19 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
+import AudioPlayer from '../components/AudioPlayer.astro';
 import { platforms } from '../data/platforms';
+import { show } from '../data/show';
+import { getPublishedEpisodes } from '../lib/rss';
+import { episodeHref, formatEpisodeDate, getLatestEpisode } from '../lib/episodes';
+
+const all = await getPublishedEpisodes();
+const latest = getLatestEpisode(all);
 ---
 
 <BaseLayout
   title="收听"
-  description="在你习惯的平台收听问情播客 AskingLove。"
+  description="在你习惯的平台收听问情播客 AskingLove，或在本站直接播放最新一集。"
 >
   <!-- Hero -->
   <div class="wrap" style="padding-top:120px; padding-bottom:72px; text-align:center;">
@@ -22,25 +29,44 @@ import { platforms } from '../data/platforms';
   <div class="light" style="padding-top:64px;">
     <div class="wrap" style="max-width:560px;">
 
-      <!-- Player -->
-      <section style="padding-bottom:44px;">
-        <div style="border-radius:20px; overflow:hidden; border:1px solid rgba(44,36,51,0.07); box-shadow:0 6px 20px rgba(18,12,28,0.06); max-width:600px; margin:0 auto;">
-          <iframe
-            src="https://player.rss.com/askinglove"
-            title="问情播客 AskingLove"
-            width="100%"
-            height="360"
-            style="border:none; display:block;"
-            allow="autoplay"
-          ></iframe>
-        </div>
-      </section>
+      <!-- Site player: latest -->
+      {latest && (
+        <section style="padding-bottom:48px;">
+          <div style="text-align:center; margin-bottom:18px;">
+            <h2 style="font-size:clamp(24px,3vw,30px); letter-spacing:-0.03em; margin:0 0 6px; color:#2c2433;">本站收听</h2>
+            <p style="color:#8a7d96; font-size:14px; margin:0;">最新一集，无需跳转即可播放。</p>
+          </div>
+          <div class="latest-card">
+            <div class="latest-kicker">
+              {[
+                latest.episodeNumber != null ? `第 ${latest.episodeNumber} 集` : null,
+                formatEpisodeDate(latest.pubDate),
+                latest.duration,
+              ].filter(Boolean).join(' · ')}
+            </div>
+            <h3 class="latest-title">{latest.title}</h3>
+            <p class="latest-hook">{latest.hook}</p>
+            {latest.audioUrl && (
+              <AudioPlayer
+                src={latest.audioUrl}
+                type={latest.audioType}
+                title="播放最新一集"
+                downloadUrl={latest.audioUrl}
+              />
+            )}
+            <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:18px;">
+              <a class="btn btn-primary" href={episodeHref(latest)} style="padding:14px 22px; font-size:14px;">查看节目页</a>
+              <a class="btn btn-light" href="/episodes" style="padding:14px 22px; font-size:14px;">全部节目</a>
+            </div>
+          </div>
+        </section>
+      )}
 
       <!-- Platforms -->
-      <section style="padding-bottom:64px;">
+      <section style="padding-bottom:48px;">
         <div style="text-align:center; margin-bottom:18px;">
           <h2 style="font-size:clamp(24px,3vw,30px); letter-spacing:-0.03em; margin:0 0 6px; color:#2c2433;">选择你的平台</h2>
-          <p style="color:#8a7d96; font-size:14px; margin:0;">选一个你习惯的平台开始收听。</p>
+          <p style="color:#8a7d96; font-size:14px; margin:0;">选一个你习惯的平台订阅或收听。</p>
         </div>
         <div style="display:grid; gap:14px;">
           {platforms.map((p) => (
@@ -61,7 +87,7 @@ import { platforms } from '../data/platforms';
         <div class="newsletter-card">
           <h3 class="newsletter-title">不想错过问情播客的更新？</h3>
           <p class="newsletter-copy">订阅邮件，收到新节目、精选内容和最新动态。</p>
-          <a href="https://askinglovepod.substack.com" target="_blank" rel="noopener noreferrer" class="newsletter-cta">
+          <a href={show.substackUrl} target="_blank" rel="noopener noreferrer" class="newsletter-cta">
             在 Substack 订阅
           </a>
         </div>
@@ -74,13 +100,41 @@ import { platforms } from '../data/platforms';
 </BaseLayout>
 
 <style>
-  /* Platform cards */
+  .latest-card {
+    padding: 28px 24px;
+    background: white;
+    border: 1px solid rgba(44, 36, 51, 0.07);
+    border-radius: 22px;
+    box-shadow: 0 6px 20px rgba(18, 12, 28, 0.05);
+  }
+  .latest-kicker {
+    font-size: 12px;
+    color: #9688a3;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .latest-title {
+    margin: 0 0 12px;
+    font-size: clamp(22px, 3vw, 26px);
+    letter-spacing: -0.02em;
+    color: #2c2433;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .latest-hook {
+    margin: 0 0 20px;
+    color: #6d6376;
+    font-size: 15px;
+    line-height: 1.8;
+    text-align: left;
+  }
+
   .platform-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 24px;
-    height: 72px;
+    min-height: 72px;
     background: white;
     border: 1px solid rgba(44, 36, 51, 0.08);
     border-radius: 18px;
@@ -93,7 +147,7 @@ import { platforms } from '../data/platforms';
   .platform-card strong {
     font-size: 17px;
     letter-spacing: -0.01em;
-    line-height: 1;
+    line-height: 1.3;
   }
   .platform-arrow {
     width: 36px;
@@ -116,12 +170,7 @@ import { platforms } from '../data/platforms';
     background: rgba(141, 81, 187, 0.14);
     transform: translateX(2px);
   }
-  .platform-card:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 12px rgba(18, 12, 28, 0.06);
-  }
 
-  /* Newsletter card */
   .newsletter-card {
     text-align: center;
     padding: 48px 36px;
