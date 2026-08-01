@@ -86,11 +86,16 @@ body {
   color: #f6f1fb;
 }
 
+/*
+ * 3-column grid keeps the nav truly page-centered.
+ * Flex + space-between was shifting the menu left/right when brand
+ * vs CTA widths differed (more noticeable on /about and /listen).
+ */
 .site-header-inner {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  column-gap: 16px;
   min-height: 72px;
   padding-top: 12px;
   padding-bottom: 12px;
@@ -100,7 +105,8 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-shrink: 0;
+  justify-self: start;
+  min-width: 0;
   color: #f6f1fb;
   text-decoration: none;
   font-weight: 700;
@@ -128,15 +134,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1;
+  justify-self: center;
   gap: 8px 20px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .site-nav-link {
   color: #cec2d9;
   text-decoration: none;
   font-size: 14px;
+  font-weight: 500;
   padding: 8px 4px;
   min-height: 44px;
   display: inline-flex;
@@ -150,15 +157,17 @@ body {
   color: #ffffff;
 }
 
+/* Color-only active state — bold weight was shifting item widths per page */
 .site-nav-link.is-active {
-  font-weight: 600;
+  font-weight: 500;
+  box-shadow: inset 0 -2px 0 #c79be6;
 }
 
 .site-header-actions {
   display: flex;
   align-items: center;
+  justify-self: end;
   gap: 10px;
-  flex-shrink: 0;
 }
 
 .site-header-cta {
@@ -245,6 +254,12 @@ body.site-menu-open {
 
 /* Collapse primary links into the hamburger menu */
 @media (max-width: 900px) {
+  .site-header-inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
   .site-nav {
     display: none;
   }
