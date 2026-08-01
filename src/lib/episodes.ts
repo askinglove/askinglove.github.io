@@ -116,17 +116,56 @@ export function getStartHereEpisodes(all: Episode[]): Episode[] {
   return START_HERE_IDS.map((id) => byId.get(id)).filter((ep): ep is Episode => !!ep);
 }
 
-/** Union of all tags sorted by frequency then name. */
-export function getAllTags(all: Episode[]): string[] {
+/** Count episodes per tag. */
+export function getTagCounts(all: Episode[]): Map<string, number> {
   const counts = new Map<string, number>();
   for (const ep of all) {
     for (const tag of ep.tags) {
       counts.set(tag, (counts.get(tag) || 0) + 1);
     }
   }
-  return [...counts.entries()]
+  return counts;
+}
+
+/** Union of all tags sorted by frequency then name. */
+export function getAllTags(all: Episode[]): string[] {
+  return [...getTagCounts(all).entries()]
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-CN'))
     .map(([tag]) => tag);
+}
+
+/** Canonical path for a tag collection page. */
+export function tagHref(tag: string): string {
+  return `/tags/${encodeURIComponent(tag)}`;
+}
+
+/** True if at least one *other* published episode also uses this tag. */
+export function tagHasOtherEpisodes(
+  tag: string,
+  episodeRssId: string,
+  all: Episode[],
+): boolean {
+  return all.some((ep) => ep.rssId !== episodeRssId && ep.tags.includes(tag));
+}
+
+/** Episodes that carry a given tag, newest first. */
+export function getEpisodesByTag(all: Episode[], tag: string): Episode[] {
+  return all
+    .filter((ep) => ep.tags.includes(tag))
+    .sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
+}
+
+/** Static paths for every tag that appears on at least one episode. */
+export async function getTagStaticPaths() {
+  const all = await getPublishedEpisodes();
+  const tags = getAllTags(all);
+  return tags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      episodes: getEpisodesByTag(all, tag),
+    },
+  }));
 }
 
 /** JSON-serializable card fields for client islands. */

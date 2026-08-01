@@ -1,0 +1,218 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+import type { Episode } from '../../lib/rss';
+import {
+  episodeHref,
+  formatEpisodeDate,
+  getTagStaticPaths,
+  rehydrateEpisode,
+  tagHref,
+} from '../../lib/episodes';
+import { show } from '../../data/show';
+
+export async function getStaticPaths() {
+  return getTagStaticPaths();
+}
+
+interface Props {
+  tag: string;
+  episodes: Episode[];
+}
+
+const { tag } = Astro.props;
+const episodes = Astro.props.episodes.map(rehydrateEpisode);
+const count = episodes.length;
+const canonicalUrl = new URL(tagHref(tag), show.url).href;
+---
+
+<BaseLayout
+  title={`#${tag}`}
+  description={`问情播客里关于「${tag}」的节目，共 ${count} 集。`}
+  canonicalUrl={canonicalUrl}
+>
+  <div class="wrap" style="padding-top:110px; padding-bottom:56px; text-align:center;">
+    <div class="tag-kicker">主题</div>
+    <h1 style="margin:0 auto 16px; font-size:clamp(38px,5.8vw,58px); line-height:1.06; letter-spacing:-0.05em; font-weight:700;">
+      #{tag}
+    </h1>
+    <div style="color:#cec2d9; font-size:clamp(17px,2vw,19px); line-height:1.85;">
+      共 {count} 集与「{tag}」相关
+    </div>
+  </div>
+
+  <div class="light" style="padding-top:64px;">
+    <div class="wrap" style="max-width:640px;">
+      <section style="padding-bottom:40px;">
+        <div style="display:grid; gap:16px;">
+          {episodes.map((episode) => (
+            <a href={episodeHref(episode)} class="episode-card">
+              <div class="episode-cover">
+                {episode.coverImage ? (
+                  <img src={episode.coverImage} alt="" loading="lazy" width="72" height="72" />
+                ) : (
+                  <span class="episode-cover-fallback">问</span>
+                )}
+              </div>
+              <div class="episode-content">
+                <strong>{episode.title}</strong>
+                <p>{episode.hook}</p>
+                <div class="episode-meta">
+                  {episode.episodeNumber != null && <span>第 {episode.episodeNumber} 集</span>}
+                  {episode.duration && <span>{episode.duration}</span>}
+                  <span>{formatEpisodeDate(episode.pubDate)}</span>
+                </div>
+                {episode.tags.length > 0 && (
+                  <div class="episode-tags">
+                    {episode.tags.map((t) => (
+                      <span class:list={[{ current: t === tag }]}>{t}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div class="episode-arrow" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section style="padding-bottom:64px; text-align:center;">
+        <a class="btn btn-light" href="/episodes" style="padding:14px 28px; font-size:15px;">
+          浏览全部节目
+        </a>
+      </section>
+    </div>
+
+    <div style="padding-top:8px;">
+      <Footer />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .tag-kicker {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #cec2d9;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+  .episode-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+    background: white;
+    border: 1px solid rgba(44, 36, 51, 0.07);
+    border-radius: 20px;
+    box-shadow: 0 4px 14px rgba(18, 12, 28, 0.04);
+    text-decoration: none;
+    color: #2c2433;
+    transition: all 0.2s ease;
+  }
+  .episode-cover {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+    background: radial-gradient(circle at 30% 20%, rgba(255,132,124,0.12), transparent 40%), linear-gradient(135deg, #161021, #1d1428);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .episode-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .episode-cover-fallback {
+    font-size: 24px;
+    color: rgba(199, 155, 230, 0.5);
+  }
+  .episode-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .episode-content strong {
+    display: block;
+    font-size: 18px;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .episode-content p {
+    margin: 0;
+    color: #6d6376;
+    font-size: 14px;
+    line-height: 1.7;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .episode-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #9688a3;
+  }
+  .episode-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .episode-tags span {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(141, 81, 187, 0.06);
+    color: #b49cc8;
+    font-size: 12px;
+  }
+  .episode-tags span.current {
+    background: rgba(141, 81, 187, 0.14);
+    color: #8d51bb;
+    font-weight: 600;
+  }
+  .episode-arrow {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(141, 81, 187, 0.07);
+    color: #8d51bb;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+  .episode-card:hover {
+    border-color: rgba(141, 81, 187, 0.20);
+    box-shadow: 0 10px 28px rgba(18, 12, 28, 0.09);
+    transform: translateY(-2px);
+  }
+  .episode-card:hover .episode-arrow {
+    background: rgba(141, 81, 187, 0.14);
+    transform: translateX(2px);
+  }
+  @media (max-width: 600px) {
+    .episode-cover { width: 56px; height: 56px; border-radius: 14px; }
+    .episode-content strong { font-size: 16px; }
+    .episode-card { padding: 16px; gap: 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .episode-card, .episode-arrow { transition: none; }
+  }
+</style>

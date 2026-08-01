@@ -13,6 +13,8 @@ import {
   getEpisodeStaticPaths,
   getRelatedEpisodes,
   rehydrateEpisode,
+  tagHasOtherEpisodes,
+  tagHref,
 } from '../../lib/episodes';
 import { podcastEpisodeJsonLd } from '../../lib/jsonld';
 
@@ -29,6 +31,12 @@ const all = await getPublishedEpisodes();
 const related = getRelatedEpisodes(episode, all, 3);
 const formattedDate = formatEpisodeDate(episode.pubDate);
 const canonicalUrl = new URL(episodeHref(episode), show.url).href;
+
+/** Tags: link only when another episode shares the same tag. */
+const tagItems = episode.tags.map((tag) => ({
+  tag,
+  href: tagHasOtherEpisodes(tag, episode.rssId, all) ? tagHref(tag) : null,
+}));
 
 const metaParts: string[] = [];
 if (episode.episodeNumber != null) metaParts.push(`第 ${episode.episodeNumber} 集`);
@@ -68,16 +76,19 @@ const nextEp = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : undefined
 
   <!-- Hero -->
   <div class="wrap" style="padding-top:105px; padding-bottom:44px; text-align:center;">
-    {episode.tags.length > 0 && (
+    {tagItems.length > 0 && (
       <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:22px;">
-        {episode.tags.map((tag: string) => (
-          <a
-            href={`/episodes?tag=${encodeURIComponent(tag)}`}
-            class="tag-chip"
-          >
-            {tag}
-          </a>
-        ))}
+        {tagItems.map(({ tag, href }) =>
+          href ? (
+            <a href={href} class="tag-chip tag-chip-link">
+              #{tag}
+            </a>
+          ) : (
+            <span class="tag-chip" title="目前只有这一集使用此标签">
+              #{tag}
+            </span>
+          ),
+        )}
       </div>
     )}
     <h1 style="margin:0 auto 18px; max-width:18ch; font-size:clamp(34px,5.4vw,54px); line-height:1.08; letter-spacing:-0.05em; font-weight:700;">
@@ -237,6 +248,9 @@ const nextEp = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : undefined
 
 <style>
   .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
     padding: 6px 12px;
     border-radius: 999px;
     background: rgba(255,255,255,0.06);
@@ -244,11 +258,15 @@ const nextEp = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : undefined
     color: #cec2d9;
     font-size: 12px;
     text-decoration: none;
-    transition: color 0.15s, border-color 0.15s;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
   }
-  .tag-chip:hover {
+  .tag-chip-link {
+    cursor: pointer;
+  }
+  .tag-chip-link:hover {
     color: white;
-    border-color: rgba(255,255,255,0.18);
+    border-color: rgba(199, 155, 230, 0.45);
+    background: rgba(141, 81, 187, 0.18);
   }
   .hook-text {
     margin: 0;

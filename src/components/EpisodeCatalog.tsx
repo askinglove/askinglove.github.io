@@ -1,41 +1,26 @@
-import { useEffect, useMemo, useState } from 'preact/hooks';
+import { useMemo, useState } from 'preact/hooks';
 import type { EpisodeCardData } from '../lib/episodes';
 
 type Props = {
   episodes: EpisodeCardData[];
-  tags: string[];
-  initialTag?: string;
+  /** Tags with episode counts (for filter chips / linkability). */
+  tags: { tag: string; count: number }[];
 };
 
 type SortMode = 'newest' | 'oldest';
 
-function readTagFromUrl(): string {
-  if (typeof window === 'undefined') return '';
-  try {
-    return new URLSearchParams(window.location.search).get('tag') || '';
-  } catch {
-    return '';
-  }
+function tagPath(tag: string): string {
+  return `/tags/${encodeURIComponent(tag)}`;
 }
 
-export default function EpisodeCatalog({ episodes, tags, initialTag = '' }: Props) {
+export default function EpisodeCatalog({ episodes, tags }: Props) {
   const [query, setQuery] = useState('');
-  const [tag, setTag] = useState(initialTag);
   const [sort, setSort] = useState<SortMode>('newest');
-
-  // Static build can't see ?tag= at compile time; hydrate from the real URL.
-  useEffect(() => {
-    const fromUrl = readTagFromUrl();
-    if (fromUrl) setTag(fromUrl);
-  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     let list = episodes.slice();
 
-    if (tag) {
-      list = list.filter((ep) => ep.tags.includes(tag));
-    }
     if (q) {
       list = list.filter(
         (ep) =>
@@ -52,7 +37,10 @@ export default function EpisodeCatalog({ episodes, tags, initialTag = '' }: Prop
     });
 
     return list;
-  }, [episodes, query, tag, sort]);
+  }, [episodes, query, sort]);
+
+  /** Tags used on more than one episode → linkable collection pages. */
+  const multiTags = tags.filter((t) => t.count > 1);
 
   return (
     <div class="catalog">
@@ -85,34 +73,25 @@ export default function EpisodeCatalog({ episodes, tags, initialTag = '' }: Prop
         </div>
       </div>
 
-      {tags.length > 0 && (
+      {multiTags.length > 0 && (
         <div class="catalog-tags" role="list">
-          <button
-            type="button"
-            role="listitem"
-            class={!tag ? 'active' : ''}
-            onClick={() => setTag('')}
-          >
-            全部
-          </button>
-          {tags.map((t) => (
-            <button
-              type="button"
+          <span class="catalog-tags-label">按主题</span>
+          {multiTags.map(({ tag, count }) => (
+            <a
+              href={tagPath(tag)}
               role="listitem"
-              class={tag === t ? 'active' : ''}
-              onClick={() => setTag(tag === t ? '' : t)}
+              class="catalog-tag-link"
+              key={tag}
             >
-              {t}
-            </button>
+              #{tag}
+              <span class="catalog-tag-count">{count}</span>
+            </a>
           ))}
         </div>
       )}
 
       <p class="catalog-count">
-        {query || tag
-          ? `找到 ${filtered.length} 集`
-          : `共 ${episodes.length} 集`}
-        {tag ? ` · ${tag}` : ''}
+        {query ? `找到 ${filtered.length} 集` : `共 ${episodes.length} 集`}
       </p>
 
       {filtered.length > 0 ? (
@@ -136,9 +115,38 @@ export default function EpisodeCatalog({ episodes, tags, initialTag = '' }: Prop
                 </div>
                 {episode.tags.length > 0 && (
                   <div class="episode-tags">
-                    {episode.tags.map((t) => (
-                      <span key={t}>{t}</span>
-                    ))}
+                    {episode.tags.map((t) => {
+                      const count = tags.find((x) => x.tag === t)?.count ?? 1;
+                      if (count > 1) {
+                        return (
+                          <span
+                            key={t}
+                            class="tag-pill tag-pill-link"
+                            role="link"
+                            tabIndex={0}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              window.location.href = tagPath(t);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                window.location.href = tagPath(t);
+                              }
+                            }}
+                          >
+                            #{t}
+                          </span>
+                        );
+                      }
+                      return (
+                        <span key={t} class="tag-pill">
+                          #{t}
+                        </span>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -162,12 +170,9 @@ export default function EpisodeCatalog({ episodes, tags, initialTag = '' }: Prop
           <button
             type="button"
             class="btn btn-light"
-            onClick={() => {
-              setQuery('');
-              setTag('');
-            }}
+            onClick={() => setQuery('')}
           >
-            清除筛选
+            清除搜索
           </button>
         </div>
       )}
@@ -226,10 +231,19 @@ export default function EpisodeCatalog({ episodes, tags, initialTag = '' }: Prop
         .catalog-tags {
           display: flex;
           flex-wrap: wrap;
+          align-items: center;
           gap: 8px;
           margin-bottom: 16px;
         }
-        .catalog-tags button {
+        .catalog-tags-label {
+          font-size: 13px;
+          color: #9688a3;
+          margin-right: 4px;
+        }
+        .catalog-tag-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
           min-height: 40px;
           padding: 8px 14px;
           border-radius: 999px;
@@ -237,14 +251,18 @@ export default function EpisodeCatalog({ episodes, tags, initialTag = '' }: Prop
           background: rgba(141, 81, 187, 0.05);
           color: #8d6ba3;
           font-size: 13px;
+          text-decoration: none;
           font-family: inherit;
-          cursor: pointer;
+          transition: background 0.15s, border-color 0.15s, color 0.15s;
         }
-        .catalog-tags button.active {
-          background: linear-gradient(135deg, #8d51bb, #a66cd8);
-          border-color: transparent;
-          color: white;
-          font-weight: 600;
+        .catalog-tag-link:hover {
+          background: rgba(141, 81, 187, 0.12);
+          border-color: rgba(141, 81, 187, 0.28);
+          color: #6f3d9a;
+        }
+        .catalog-tag-count {
+          font-size: 11px;
+          opacity: 0.75;
         }
         .catalog-count {
           margin: 0 0 18px;
@@ -323,12 +341,19 @@ export default function EpisodeCatalog({ episodes, tags, initialTag = '' }: Prop
           flex-wrap: wrap;
           margin-top: 10px;
         }
-        .episode-tags span {
+        .tag-pill {
           padding: 4px 10px;
           border-radius: 999px;
           background: rgba(141, 81, 187, 0.06);
           color: #b49cc8;
           font-size: 12px;
+        }
+        .tag-pill-link {
+          cursor: pointer;
+        }
+        .tag-pill-link:hover {
+          background: rgba(141, 81, 187, 0.14);
+          color: #8d51bb;
         }
         .episode-arrow {
           width: 36px;

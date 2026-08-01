@@ -3,12 +3,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Footer from '../../components/Footer.astro';
 import EpisodeCatalog from '../../components/EpisodeCatalog.tsx';
 import { getPublishedEpisodes } from '../../lib/rss';
-import { getAllTags, toEpisodeCardData } from '../../lib/episodes';
+import { getTagCounts, toEpisodeCardData } from '../../lib/episodes';
 
 const allEpisodes = await getPublishedEpisodes();
 const cards = allEpisodes.map(toEpisodeCardData);
-const tags = getAllTags(allEpisodes);
-const initialTag = Astro.url.searchParams.get('tag') || '';
+const tags = [...getTagCounts(allEpisodes).entries()]
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-CN'))
+  .map(([tag, count]) => ({ tag, count }));
 ---
 
 <BaseLayout
@@ -30,7 +31,7 @@ const initialTag = Astro.url.searchParams.get('tag') || '';
     <div class="wrap" style="max-width:640px;">
       <section style="padding-bottom:64px;">
         {allEpisodes.length > 0 ? (
-          <EpisodeCatalog client:load episodes={cards} tags={tags} initialTag={initialTag} />
+          <EpisodeCatalog client:load episodes={cards} tags={tags} />
         ) : (
           <div style="text-align:center; padding:48px 0;">
             <p style="color:#6d6376; font-size:18px;">节目正在路上，敬请期待。</p>
