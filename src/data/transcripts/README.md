@@ -45,6 +45,8 @@ disclaimer: 文稿经整理，与音频可能略有出入；以表达清晰为�
 # 需要: pip install faster-whisper opencc-python-reimplemented, ffmpeg
 npm run transcript:all                 # 全部集
 python3 scripts/transcribe-all.py --ids 2664929 --force
+# default model is **small** (better quality than base)
+python3 scripts/transcribe-all.py --model small --force
 ```
 
 产出：
@@ -52,6 +54,8 @@ python3 scripts/transcribe-all.py --ids 2664929 --force
 - `src/data/captions/{id}.srt` — 源文件
 - **公开下载：** `https://askinglove.com/captions/{id}.srt`（`public/captions/`）
 - `raw/transcripts/{id}.json` — 原始识别结果（本地调试，默认不提交）
+
+识别参数：Whisper **small** + 简体转换 + 问情专用错词表 + `initial_prompt` 术语偏置。
 
 ## 脚手架 / 导出
 

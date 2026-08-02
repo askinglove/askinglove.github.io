@@ -138,7 +138,8 @@ jobs:
         if: needs.check-feed.outputs.should_enrich == 'true'
         run: |
           # Without --force: only episodes that lack transcripts/captions
-          python3 scripts/transcribe-all.py --model base
+          # small = better Chinese accuracy than base (slower)
+          python3 scripts/transcribe-all.py --model small
         env:
           HF_HUB_DISABLE_TELEMETRY: '1'
 
