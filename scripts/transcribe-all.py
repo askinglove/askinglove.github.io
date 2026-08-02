@@ -40,24 +40,11 @@ FEED = "https://media.rss.com/askinglove/feed.xml"
 
 DEFAULT_MODEL = "small"
 
-# Bias Whisper toward show vocabulary (Chinese podcast about relationships)
-INITIAL_PROMPT = (
-    "欢迎收听问情播客。我是小问，问情播客的主持人。"
-    "在这里我们一起聊聊爱情里的那些事。我们不急着给答案，而是陪你一起把那些说不清楚的感觉慢慢理出来。"
-    "你有没有过这样的时刻，明明知道该怎么做，但就是迈不出那一步。"
-    "这是一档关于爱情、关系与情绪的中文播客。"
-    "常见词：暗恋、分手、出轨、婚姻、冷战、原生家庭、异地恋、妥协、信任、边界、讨好型人格、安全感、"
-    "沉没成本、付出失衡、石墙效应、被动攻击、认知失调、身份剥夺、月子、月子中心、猪蹄汤、"
-    "辅食、益生菌、纸尿裤、储奶袋、母乳、抖音、置顶、品牌方、盖瑞·查普曼、爱的五种语言、世界卫生组织。"
-)
+# Keep short: long prompts make Whisper collapse to intro-only on some episodes.
+INITIAL_PROMPT = "问情播客。主持人小问。中文播客，谈爱情与关系。"
 
-# Hint phrases for faster-whisper (boosts recognition of show terms)
-HOTWORDS = (
-    "问情播客 小问 爱情里的那些事 迈不出那一步 慢慢理出来 "
-    "暗恋 分手 出轨 婚姻 冷战 原生家庭 安全感 讨好 边界 "
-    "沉没成本 石墙效应 被动攻击 认知失调 身份剥夺 爱的语言 "
-    "辅食 益生菌 纸尿裤 储奶袋 母乳 抖音 置顶 品牌方 月子 猪蹄汤"
-)
+# Optional hint phrases (kept short; long hotwords can also truncate output)
+HOTWORDS = "问情播客 小问 原生家庭 安全感 沉没成本 冷战 出轨"
 
 # Common ASR confusions for this show (applied after 繁→简)
 # Order matters: longer / more specific patterns first.
