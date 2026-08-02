@@ -49,7 +49,8 @@ python3 scripts/transcribe-all.py --ids 2664929 --force
 
 产出：
 - `src/data/transcripts/{id}.md` — 正文（阅读版，简体）
-- `src/data/captions/{id}.srt` — YouTube 字幕（带真实时间轴）
+- `src/data/captions/{id}.srt` — 源文件
+- **公开下载：** `https://askinglove.com/captions/{id}.srt`（`public/captions/`）
 - `raw/transcripts/{id}.json` — 原始识别结果（本地调试，默认不提交）
 
 ## 脚手架 / 导出

@@ -151,6 +151,7 @@ jobs:
             src/data/episode-store-links.json \
             src/data/transcripts \
             src/data/captions \
+            public/captions \
             || true
           if git diff --staged --quiet; then
             echo "No generated file changes to commit."

@@ -23,6 +23,8 @@ AUDIO_DIR = Path("/tmp/askinglove-audio")
 RAW_DIR = ROOT / "raw" / "transcripts"
 TX_DIR = ROOT / "src" / "data" / "transcripts"
 SRT_DIR = ROOT / "src" / "data" / "captions"
+# Public web URLs: https://askinglove.com/captions/{id}.srt
+SRT_PUBLIC = ROOT / "public" / "captions"
 # also mirror to exports/youtube for local ops convenience
 SRT_EXPORT = ROOT / "exports" / "youtube"
 FEED = "https://media.rss.com/askinglove/feed.xml"
@@ -202,6 +204,7 @@ def main():
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     TX_DIR.mkdir(parents=True, exist_ok=True)
     SRT_DIR.mkdir(parents=True, exist_ok=True)
+    SRT_PUBLIC.mkdir(parents=True, exist_ok=True)
     SRT_EXPORT.mkdir(parents=True, exist_ok=True)
 
     eps = parse_feed()
@@ -281,6 +284,7 @@ def main():
             md_path.write_text(md, encoding="utf-8")
             srt_body = segments_to_srt(segs)
             srt_path.write_text(srt_body, encoding="utf-8")
+            (SRT_PUBLIC / f"{rid}.srt").write_text(srt_body, encoding="utf-8")
             (SRT_EXPORT / f"{rid}.srt").write_text(srt_body, encoding="utf-8")
             chars = len(re.sub(r"\s+", "", clean_text(full)))
             print(f"  done in {elapsed:.1f}s segs={len(segs)} chars={chars}")

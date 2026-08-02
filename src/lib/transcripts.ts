@@ -36,6 +36,23 @@ export function transcriptHref(episode: { slug: string }): string {
   return `/episodes/${episode.slug}/transcript`;
 }
 
+/** Public download URL for timed YouTube-ready captions (.srt). */
+export function captionsHref(rssId: string): string {
+  return `/captions/${rssId}.srt`;
+}
+
+export function hasCaptionsFile(rssId: string): boolean {
+  try {
+    // Prefer public/ (served by the site); fall back to data/ during local edits.
+    return (
+      fs.existsSync(path.join(process.cwd(), 'public', 'captions', `${rssId}.srt`)) ||
+      fs.existsSync(path.join(process.cwd(), 'src', 'data', 'captions', `${rssId}.srt`))
+    );
+  } catch {
+    return false;
+  }
+}
+
 export function transcriptFilePath(rssId: string): string {
   return path.join(TRANSCRIPTS_DIR, `${rssId}.md`);
 }
