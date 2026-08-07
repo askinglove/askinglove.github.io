@@ -23,8 +23,6 @@ import { buildShowNotes } from '../../lib/show-notes';
 import { getEpisodePlatformLinks } from '../../lib/store-links';
 import {
   buildYoutubeDescription,
-  captionsHref,
-  hasCaptionsFile,
   hasFullTranscript,
   transcriptHref,
 } from '../../lib/transcripts';
@@ -64,8 +62,6 @@ const platformLinks = getEpisodePlatformLinks({
 
 const canReadFull = hasFullTranscript(episode.rssId);
 const fullTextHref = transcriptHref(episode);
-const hasCaptions = hasCaptionsFile(episode.rssId);
-const captionsUrl = captionsHref(episode.rssId);
 const youtubeDescription = buildYoutubeDescription({
   episode,
   takeaways: showNotes.takeaways,
@@ -153,22 +149,6 @@ const nextEp = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : undefined
             </>
           )}
         </div>
-        {hasCaptions && (
-          <div class="read-full-card" style="margin-top:12px;">
-            <div>
-              <strong>字幕文件</strong>
-              <p>带时间轴的 .srt，可直接用于 YouTube 字幕上传。</p>
-            </div>
-            <a
-              class="btn btn-light"
-              href={captionsUrl}
-              download={`${episode.rssId}.srt`}
-              style="padding:14px 22px; font-size:15px; white-space:nowrap;"
-            >
-              下载字幕
-            </a>
-          </div>
-        )}
       </section>
 
       <!-- Structured show notes -->
