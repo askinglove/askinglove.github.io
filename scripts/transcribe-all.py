@@ -18,6 +18,7 @@ import re
 import sys
 import time
 import urllib.request
+from collections import Counter
 from pathlib import Path
 
 # Line-buffered logs when piped (nohup/tee)
@@ -141,6 +142,24 @@ REPLACEMENTS = [
     # 溜弯：avoid rewriting 六万粉丝 / 六万块
     (r"去六万", "去溜弯"),
     (r"出去六万", "出去溜弯"),
+    (r"陪我妈六湾", "陪我妈溜弯"),
+    (r"香青酒", "相亲角"),
+    (r"愿意香青", "愿意相亲"),
+    (r"房子的首富", "房子的首付"),
+    (r"不要采礼", "不要彩礼"),
+    (r"气到鼠发抖", "气到手发抖"),
+    (r"温柔顾佳", "温柔顾家"),
+    (r"医院的绞费单", "医院的缴费单"),
+    (r"绞费单", "缴费单"),
+    (r"运动的部署", "运动的步数"),
+    (r"沉没成本面误", "沉没成本谬误"),
+    (r"先抱小", "先报小"),
+    (r"把我抱小", "把我报小"),
+    (r"什么时候半久", "什么时候办酒"),
+    (r"半久那天", "办酒那天"),
+    (r"见不得人的罢饼", "见不得人的把柄"),
+    (r"见不得人的饼", "见不得人的把柄"),
+    (r"心里就特别拧霸", "心里就特别拧巴"),
     (r"洋台", "阳台"),
     (r"断上汤", "端上汤"),
     (r"五得满身废子", "捂得满身痱子"),
@@ -312,7 +331,17 @@ def fmt_srt(sec: float) -> str:
 def body_markdown(title: str, segments: list[dict], model_name: str = "small") -> str:
     """Turn timed transcript into readable 正文 with light structure."""
     texts = [clean_text(s["text"]) for s in segments if s.get("text", "").strip()]
-    full = "".join(texts)
+    # Some passes (especially condition_on_previous_text=False) drop 。！？
+    # so 正文 would collapse into one paragraph. Treat cue ends as sentences.
+    ended = []
+    for t in texts:
+        t = t.strip()
+        if not t:
+            continue
+        if t[-1] not in "。！？!?；;":
+            t += "。"
+        ended.append(t)
+    full = "".join(ended)
 
     # Split into sentences
     parts = re.split(r"(?<=[。！？!?])", full)
@@ -376,6 +405,19 @@ def write_outputs(rid: str, title: str, segs: list[dict], model_name: str = "sma
     (SRT_EXPORT / f"{rid}.srt").write_text(srt_body, encoding="utf-8")
     full = "".join(s.get("text", "") for s in segs)
     return len(re.sub(r"\s+", "", clean_text(full)))
+
+
+def looks_collapsed(segments: list[dict], min_repeats: int = 12) -> bool:
+    """Detect Whisper intro-loop collapse (same short phrase repeated)."""
+    full = "".join(s.get("text", "") for s in segments)
+    compact = re.sub(r"\s+", "", full)
+    if len(compact) < 80:
+        return True
+    grams = [compact[i : i + 8] for i in range(0, max(0, len(compact) - 7), 4)]
+    if not grams:
+        return False
+        _top, n = Counter(grams).most_common(1)[0]
+    return n >= min_repeats
 
 
 def reclean_from_raw(ids: set[str] | None = None) -> tuple[int, int]:
@@ -501,24 +543,37 @@ def main():
         try:
             download(ep["audio"], audio)
             t0 = time.time()
-            segments_iter, info = model.transcribe(
-                str(audio),
-                language="zh",
-                vad_filter=True,
-                # beam 1 default on CPU; raise with --beam 3 for tougher eps
-                beam_size=max(1, args.beam),
-                best_of=max(1, args.beam),
-                temperature=0.0,
-                condition_on_previous_text=True,
-                initial_prompt=INITIAL_PROMPT,
-                hotwords=HOTWORDS,
-                compression_ratio_threshold=2.4,
-                no_speech_threshold=0.5,
-            )
-            segs = [
-                {"start": float(s.start), "end": float(s.end), "text": s.text}
-                for s in segments_iter
-            ]
+
+            def run_asr(condition_prev: bool):
+                segments_iter, info = model.transcribe(
+                    str(audio),
+                    language="zh",
+                    vad_filter=True,
+                    # beam 1 default on CPU; raise with --beam 3 for tougher eps
+                    beam_size=max(1, args.beam),
+                    best_of=max(1, args.beam),
+                    temperature=0.0,
+                    # Shared show intro + True often loops the last intro sentence.
+                    condition_on_previous_text=condition_prev,
+                    initial_prompt=INITIAL_PROMPT,
+                    hotwords=HOTWORDS,
+                    compression_ratio_threshold=2.4,
+                    no_speech_threshold=0.5,
+                )
+                segs_out = [
+                    {"start": float(s.start), "end": float(s.end), "text": s.text}
+                    for s in segments_iter
+                ]
+                return segs_out, info
+
+            segs, info = run_asr(False)
+            if looks_collapsed(segs):
+                print("  collapsed ASR detected — retry with condition_on_previous_text=True")
+                segs2, info2 = run_asr(True)
+                if not looks_collapsed(segs2):
+                    segs, info = segs2, info2
+                else:
+                    print("  retry still collapsed; keeping first pass")
             elapsed = time.time() - t0
             full = "".join(s["text"] for s in segs)
             raw_path.write_text(
